@@ -1,0 +1,44 @@
+
+
+
+ANALOG_INPUT ConnectTo;
+
+DIGITAL_OUTPUT Connect, DiscEC;
+
+ANALOG_OUTPUT EquipmentID;
+
+
+Integer gnCurrentConnection;
+
+
+Change ConnectTo //ConnectTo =0(disconnect) or =index(connect)
+{
+	/*If not currently connected the equipment
+	you want to connect to or disconnect request and 
+	there is a current connection*/
+	If( ConnectTo != gnCurrentConnection ) 
+	{//will not enter this conditional if already connected to requested connection 
+		//If currently connected
+		If( gnCurrentConnection )
+		{
+			//Disconnect the currently connected
+			EquipmentID = gnCurrentConnection;
+			Pulse( 1, DiscEC );
+			gnCurrentConnection = 0;
+		}
+		//If requesting connection
+		If( ConnectTo )
+		{	
+			EquipmentID = ConnectTo;
+			Pulse( 1, Connect );
+			gnCurrentConnection = ConnectTo;
+		}
+	}
+}
+
+
+Function Main( )
+{
+	gnCurrentConnection = 0;
+}
+

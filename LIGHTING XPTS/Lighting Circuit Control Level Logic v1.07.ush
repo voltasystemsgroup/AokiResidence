@@ -1,0 +1,112 @@
+[BEGIN]
+  Version=1
+[END]
+[BEGIN]
+  ObjTp=FSgntr
+  Sgntr=UserSPlus
+  RelVrs=1
+  IntStrVrs=1
+  SPlusVrs=4.03.16
+  CrossCplrVrs=1.3
+[END]
+[BEGIN]
+  ObjTp=Hd
+[END]
+[BEGIN]
+  ObjTp=Symbol
+  Exclusions=1,19,20,21,88,89,167,168,179,213,214,215,216,217,225,226,248,249,266,267,310,718,756,854,
+  Exclusions_CDS=5
+  Inclusions_CDS=6
+  Name=Lighting Circuit Control Level Logic v1.07
+  SmplCName=Lighting Circuit Control Level Logic v1.07.usp
+  Code=1
+  SysRev5=3.090
+  InputCue1=ON_OFF_DOUBLE_PRESS_LEVEL_ON
+  InputSigType1=Digital
+  InputCue2=ON_DOUBLE_PRESS_LEVEL_ON
+  InputSigType2=Digital
+  InputCue3=ON_OFF_DOUBLE_PRESS_LEVEL_OFF
+  InputSigType3=Digital
+  InputCue4=OFF_DOUBLE_PRESS_LEVEL_OFF
+  InputSigType4=Digital
+  InputCue5=ON_OFF_PRESS_N_RELEASE_LEVEL_ON
+  InputSigType5=Digital
+  InputCue6=ON_PRESS_N_RELEASE_LEVEL_ON
+  InputSigType6=Digital
+  InputCue7=ON_OFF_PRESS_N_RELEASE_LEVEL_OFF
+  InputSigType7=Digital
+  InputCue8=OFF_PRESS_N_RELEASE_LEVEL_OFF
+  InputSigType8=Digital
+  InputCue9=[~UNUSED~]
+  InputSigType9=Digital
+  InputCue10=DYNAMIC_ON_FB
+  InputSigType10=Digital
+  InputList2Cue1=LEVEL_FB
+  InputList2SigType1=Analog
+  OutputList2Cue1=[~UNUSED~]
+  OutputList2SigType1=Analog
+  OutputList2Cue2=[~UNUSED~]
+  OutputList2SigType2=Analog
+  OutputList2Cue3=[~UNUSED~]
+  OutputList2SigType3=Analog
+  OutputList2Cue4=[~UNUSED~]
+  OutputList2SigType4=Analog
+  OutputList2Cue5=[~UNUSED~]
+  OutputList2SigType5=Analog
+  OutputList2Cue6=[~UNUSED~]
+  OutputList2SigType6=Analog
+  OutputList2Cue7=[~UNUSED~]
+  OutputList2SigType7=Analog
+  OutputList2Cue8=[~UNUSED~]
+  OutputList2SigType8=Analog
+  OutputList2Cue9=[~UNUSED~]
+  OutputList2SigType9=Analog
+  OutputList2Cue10=[~UNUSED~]
+  OutputList2SigType10=Analog
+  OutputList2Cue11=LEVEL
+  OutputList2SigType11=Analog
+  OutputList2Cue12=RL_LEVEL
+  OutputList2SigType12=Analog
+  ParamCue1=[Reference Name]
+  MinVariableInputs=10
+  MaxVariableInputs=10
+  MinVariableInputsList2=1
+  MaxVariableInputsList2=1
+  MinVariableOutputs=0
+  MaxVariableOutputs=0
+  MinVariableOutputsList2=12
+  MaxVariableOutputsList2=12
+  MinVariableParams=0
+  MaxVariableParams=0
+  Expand=expand_separately
+  Expand2=expand_separately
+  ProgramTree=Logic
+  SymbolTree=32
+  Hint=
+  PdfHelp=
+  HelpID= 
+  Render=4
+  Smpl-C=16
+  CompilerCode=-48
+  CompilerParamCode=27
+  CompilerParamCode5=14
+  NumFixedParams=1
+  Pp1=1
+  MPp=1
+  NVStorage=10
+  ParamSigType1=String
+  SmplCInputCue1=o#
+  SmplCOutputCue1=i#
+  SmplCInputList2Cue1=an#
+  SmplCOutputList2Cue1=ai#
+  SPlus2CompiledName=S2_Lighting_Circuit_Control_Level_Logic_v1_07
+  SymJam=NonExclusive
+  FileName=Lighting Circuit Control Level Logic v1.07.ush
+  SIMPLPlusModuleEncoding=0
+[END]
+[BEGIN]
+  ObjTp=Dp
+  H=1
+  Tp=1
+  NoS=False
+[END]

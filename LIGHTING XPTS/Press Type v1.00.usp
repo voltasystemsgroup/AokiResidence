@@ -1,0 +1,108 @@
+
+
+
+
+
+
+DIGITAL_INPUT 	PRESS,
+				PRESS_N_RELEASE_IN,
+				PRESS_N_HOLD_IN,
+				DOUBLE_PRESS_IN;
+
+ANALOG_INPUT	PULSE_TIME,
+				DOUBLE_PRESS_WAIT,
+				PRESS_N_HOLD_WAIT;
+
+
+DIGITAL_OUTPUT 	PRESS_N_RELEASE,
+				PRESS_N_HOLD,
+				DOUBLE_PRESS;
+				
+
+Integer nFirstPress,
+		nInDoublePressWait,
+		nInPressNHoldWait;				
+
+
+
+Function StartWaits( )
+{
+	nInPressNHoldWait = 1;
+	Wait( PRESS_N_HOLD_WAIT, wPressNHoldWait )
+	{
+		nInPressNHoldWait = 0;
+		If( nFirstPress && PRESS )
+		{
+			nFirstPress = 0;
+			PRESS_N_HOLD = 1;
+		}
+	}
+
+	nInDoublePressWait = 1;
+	Wait( DOUBLE_PRESS_WAIT, wDoublePressWait )
+	{
+		nInDoublePressWait = 0;
+		If( nFirstPress && !PRESS )
+		{
+		    nFirstPress = 0;
+			Pulse( PULSE_TIME, PRESS_N_RELEASE );
+		}
+	}
+}
+
+PUSH PRESS_N_RELEASE_IN, PRESS_N_HOLD_IN, DOUBLE_PRESS_IN
+{
+	CancelWait( wPressNHoldWait );
+	nInPressNHoldWait = 0;
+	CancelWait( wDoublePressWait );
+	nInDoublePressWait = 0;
+}
+				
+PUSH PRESS
+{
+	If( nFirstPress )
+	{
+		nFirstPress = 0;
+		If( nInDoublePressWait )
+		{
+			Pulse( PULSE_TIME, DOUBLE_PRESS );
+		}
+	}
+	Else
+	{
+		nFirstPress = 1;		
+		StartWaits( );		
+	}		
+}
+
+RELEASE PRESS
+{	
+	If( PRESS_N_HOLD )
+	{
+		PRESS_N_HOLD = 0;
+	}
+	Else
+	{
+    	If( nFirstPress && nInPressNHoldWait && !nInDoublePressWait )
+		{
+		    nFirstPress = 0;
+			Pulse( PULSE_TIME, PRESS_N_RELEASE );
+		}
+	}
+}
+
+
+
+
+
+
+
+
+Function Main( )
+{
+	nFirstPress = 0; 
+	nInDoublePressWait = 0;
+	nInPressNHoldWait = 0;	
+}				
+				
+				

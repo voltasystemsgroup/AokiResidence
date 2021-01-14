@@ -1,0 +1,50 @@
+
+#CATEGORY "0"
+#INCLUDEPATH "..\bin"
+#USER_SIMPLSHARP_LIBRARY "DataSelector"
+
+
+#DEFINE_CONSTANT	MAX_IO 51
+#DEFINE_CONSTANT	MAX_ITEMS 51
+#DEFINE_CONSTANT	MAX_CHARS 255
+
+ANALOG_INPUT	_SKIP_,
+				i[ MAX_IO ],
+				_SKIP_;
+STRING_INPUT	data[ MAX_ITEMS ][ MAX_CHARS ];
+
+STRING_OUTPUT	_SKIP_;
+STRING_OUTPUT	o[ MAX_IO ];
+
+
+DataSelector d;
+
+
+CHANGE i
+{
+	Integer iIndex;	
+	iIndex = GetLastModifiedArrayIndex( );
+	d.ChangeInput( iIndex, i[ iIndex ] + 1 );
+}
+
+CHANGE data
+{
+	Integer index;	
+	index = GetLastModifiedArrayIndex( );
+	d.ChangeData( index );
+}
+
+Callback Function SetOutput( Integer oIndex, Integer dataIndex ) { o[ oIndex ] = data[ dataIndex ]; }
+Callback Integer_Function GetInput( Integer iIndex ) { return( i[ iIndex ] + 1 ); }
+
+
+
+Function Main( )
+{
+	d.DataSelectorMain( MAX_IO, MAX_ITEMS );
+	
+	RegisterDelegate( d, _Output,	SetOutput );
+	RegisterDelegate( d, _Input,	GetInput );
+
+}
+
