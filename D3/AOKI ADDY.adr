@@ -1,0 +1,11 @@
+[Entries]
+CP3=tcp 10.0.22.10
+DINAP=tcp 10.0.22.11
+
+[Settings]
+DefaultEntry=
+
+[Comments]
+CP3=
+DINAP=
+

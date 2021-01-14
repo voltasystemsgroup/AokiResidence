@@ -1,0 +1,82 @@
+<Device Model="DIN-AP3">
+   <Network Type="Cresnet" Id="01">
+      <Device Model="C2N-CBD-P" DeviceId="10" Name="@ GARARE"/>
+      <Device Model="C2N-CBD-P" DeviceId="11" Name="@ GARAGE ENTRY"/>
+      <Device Model="C2N-CBD-P" DeviceId="12" Name="@ TOP EAST STAIRS"/>
+      <Device Model="C2N-CBD-P" DeviceId="13" Name="@ KITCHEN PANTRY"/>
+      <Device Model="C2N-CBD-P" DeviceId="14" Name="@ KITCHEN SLIDER"/>
+      <Device Model="C2N-CBD-P" DeviceId="15" Name="@ STUDY ENTRY"/>
+      <Device Model="C2N-CBD-P" DeviceId="16" Name="@ TOP WEST STAIRS"/>
+      <Device Model="C2N-CBD-P" DeviceId="17" Name="@ WEST DECK DOOR"/>
+      <Device Model="C2N-CBD-P" DeviceId="1A" Name="@ DRIVEWAY ENTRY"/>
+      <Device Model="C2N-CBD-P" DeviceId="1B" Name="@ FOYER"/>
+      <Device Model="C2N-CBD-P" DeviceId="20" Name="@ EAST HALL"/>
+      <Device Model="C2N-CBD-P" DeviceId="21" Name="@ MASSAGE ENTRY"/>
+      <Device Model="C2N-CBD-P" DeviceId="22" Name="@ MOMS ROOM DOOR"/>
+      <Device Model="C2N-CBD-P" DeviceId="23" Name="@ LIVING SLIDER"/>
+      <Device Model="C2N-CBD-P" DeviceId="24" Name="@ DEN ENTRY"/>
+      <Device Model="C2N-CBD-P" DeviceId="25" Name="@ WEST STAIRS UP"/>
+      <Device Model="C2N-CBD-P" DeviceId="26" Name="@ WEST STAIRS DOWN"/>
+      <Device Model="C2N-CBD-P" DeviceId="27" Name="@ HIS VANITY"/>
+      <Device Model="C2N-CBD-P" DeviceId="28" Name="@ HER VANITY"/>
+      <Device Model="C2N-CBD-P" DeviceId="29" Name="@ SOUTH SLIDER"/>
+      <Device Model="C2N-CBD-P" DeviceId="2A" Name="@ NORTH SLIDER"/>
+      <Device Model="C2N-CBD-P" DeviceId="2B" Name="@ LOUNGE POOL BATH"/>
+      <Device Model="C2N-CBD-P" DeviceId="30" Name="@ STAIRS"/>
+      <Device Model="C2N-CBD-P" DeviceId="31" Name="@ GAMEROOM ENTRY"/>
+      <Device Model="C2N-CBD-P" DeviceId="32" Name="@GAMEROOM SLIDER"/>
+      <Device Model="C2N-CBD-P" DeviceId="33" Name="@ LOUNGE SLIDER"/>
+      <Device Model="C2N-CBD-P" DeviceId="34" Name="@ LOUNGE HALLWAY"/>
+      <Device Model="C2N-CBD-P" DeviceId="35" Name="@ VOCAL BOOTH"/>
+      <Device Model="CSM-QMTDC-163-1-CN" DeviceId="41" Name="KITCHEN WIN 1"/>
+      <Device Model="CSM-QMTDC-163-1-CN" DeviceId="42" Name="KITCHEN WIN 2"/>
+      <Device Model="CSM-QMTDC-163-1-CN" DeviceId="43" Name="KITCHEN SLIDER"/>
+      <Device Model="CSM-QMTDC-163-1-CN" DeviceId="44" Name="KITCHEN  WIN 3"/>
+      <Device Model="CSM-QMT50-DCCN" DeviceId="45" Name="GREAT ROOM WIN"/>
+      <Device Model="CSM-QMT50-DCCN" DeviceId="46" Name="GREAT ROOM   N SLIDER 1"/>
+      <Device Model="CSM-QMT50-DCCN" DeviceId="47" Name="GREAT ROOM  N SLIDER 2"/>
+      <Device Model="CSM-QMT50-DCCN" DeviceId="48" Name="GREAT ROOM W SLIDER"/>
+      <Device Model="CSM-QMTDC-256-2-CN" DeviceId="51" Name="Window 1 TOP"/>
+      <Device Model="CSM-QMTDC-256-2-CN" DeviceId="52" Name="Window 1 BOT"/>
+      <Device Model="CSM-QMTDC-256-2-CN" DeviceId="53" Name="Window SLIDER WIN"/>
+      <Device Model="CSM-QMTDC-256-2-CN" DeviceId="54" Name="LIVING SLIDER"/>
+      <Device Model="CSM-QMTDC-256-2-CN" DeviceId="55" Name="Window 2 TOP"/>
+      <Device Model="CSM-QMTDC-256-2-CN" DeviceId="56" Name="Window 2 BOT"/>
+      <Device Model="CSM-QMTDC-256-2-CN" DeviceId="57" Name="Window 4 TOP"/>
+      <Device Model="CSM-QMTDC-256-2-CN" DeviceId="58" Name="Window 4 BOT"/>
+      <Device Model="CSM-QMTDC-256-2-CN" DeviceId="59" Name="Window 5 TOP"/>
+      <Device Model="CSM-QMTDC-256-2-CN" DeviceId="5A" Name="Window 5 BOT"/>
+      <Device Model="CSM-QMTDC-256-2-CN" DeviceId="5B" Name="Window 6 TOP"/>
+      <Device Model="CSM-QMTDC-256-2-CN" DeviceId="5C" Name="Window 6 BOT"/>
+      <Device Model="CSM-QMTDC-163-1-CN" DeviceId="5D" Name="MASTER N SLIDER 2"/>
+      <Device Model="CSM-QMTDC-163-1-CN" DeviceId="5E" Name="MASTER N SLIDER 1"/>
+      <Device Model="CSM-QMTDC-163-1-CN" DeviceId="5F" Name="MASTER WIN 1"/>
+      <Device Model="CSM-QMTDC-163-1-CN" DeviceId="60" Name="MASTER WIN 2"/>
+      <Device Model="CSM-QMTDC-163-1-CN" DeviceId="61" Name="MASTER WIN 3"/>
+      <Device Model="CSM-QMTDC-163-1-CN" DeviceId="62" Name="MASTER WIN 4"/>
+      <Device Model="CSM-QMTDC-163-1-CN" DeviceId="63" Name="MASTER WIN 5"/>
+      <Device Model="CSM-QMTDC-163-1-CN" DeviceId="64" Name="MASTER WIN 6"/>
+      <Device Model="CSM-QMTDC-163-1-CN" DeviceId="65" Name="MASTER WIN 7"/>
+      <Device Model="CSM-QMTDC-163-1-CN" DeviceId="66" Name="MASTER WIN 8"/>
+      <Device Model="CSM-QMTDC-163-1-CN" DeviceId="67" Name="MASTER S SLIDER"/>
+      <Device Model="CSM-QMTDC-163-1-CN" DeviceId="68" Name="MASTER BATH WIN 2"/>
+      <Device Model="CSM-QMTDC-163-1-CN" DeviceId="69" Name="MASTER BATH WIN 1"/>
+      <Device Model="CLX-2DIM8" DeviceId="73" Name="Enclosure 2 Slot 03"/>
+      <Device Model="CLX-2DIMU8,CLX-2DIMU8-277,CLXI-2DIMU8,CLXI-2DIMU8-277" DeviceId="74" Name="Enclosure 2 Slot 04"/>
+      <Device Model="CLX-2DIMU8,CLX-2DIMU8-277,CLXI-2DIMU8,CLXI-2DIMU8-277" DeviceId="75" Name="Enclosure 2 Slot 05"/>
+      <Device Model="CLX-2DIMU8,CLX-2DIMU8-277,CLXI-2DIMU8,CLXI-2DIMU8-277" DeviceId="76" Name="Enclosure 2 Slot 06"/>
+      <Device Model="CLX-2DIMU8,CLX-2DIMU8-277,CLXI-2DIMU8,CLXI-2DIMU8-277" DeviceId="77" Name="Enclosure 2 Slot 07"/>
+      <Device Model="CLX-1DIM8" DeviceId="83" Name="Enclosure 1 Slot 03"/>
+      <Device Model="CLX-2DIMU8,CLX-2DIMU8-277,CLXI-2DIMU8,CLXI-2DIMU8-277" DeviceId="84" Name="Enclosure 1 Slot 04"/>
+      <Device Model="CLX-2DIMU8,CLX-2DIMU8-277,CLXI-2DIMU8,CLXI-2DIMU8-277" DeviceId="85" Name="Enclosure 1 Slot 05"/>
+      <Device Model="CLX-2DIMU8,CLX-2DIMU8-277,CLXI-2DIMU8,CLXI-2DIMU8-277" DeviceId="86" Name="Enclosure 1 Slot 06"/>
+      <Device Model="CLX-2DIMU8,CLX-2DIMU8-277,CLXI-2DIMU8,CLXI-2DIMU8-277" DeviceId="87" Name="Enclosure 1 Slot 07"/>
+   </Network>
+   <Network Type="Ethernet" Id="02">
+      <Device Model="CEN-RFGW-EX" DeviceId="4B" Name="CEN-RFGW-EX (Shared Ethernet)">
+         <Network Type="RF">
+            <Device Model="CLW-DIMEX-E" DeviceId="6C" Name="POWDER ROOM dimmer"/>
+         </Network>
+      </Device>
+   </Network>
+</Device>
