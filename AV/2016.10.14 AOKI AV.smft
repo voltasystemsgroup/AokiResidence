@@ -1,0 +1,17 @@
+<Device Model="CP3">
+   <Network Type="Cresnet" Id="01"/>
+   <Network Type="Ethernet" Id="02">
+      <Device Model="MC3 Remote Ethernet Processing" DeviceId="16">
+         <Network Type="Cresnet" Id="01"/>
+         <Network Type="RF" Id="03">
+            <Device Model="MLX-3" DeviceId="03"/>
+            <Device Model="HR-150" DeviceId="04"/>
+         </Network>
+      </Device>
+      <Device Model="DM-MD16x16" DeviceId="21"/>
+      <Device Model="SWAMP-24x8 (Ethernet)." DeviceId="22"/>
+      <Device Model="HD-MD4X1-4K-E" DeviceId="23"/>
+      <Device Model="Autonomic MMS-5A" DeviceId="71"/>
+      <Device Model="Autonomic MMS-5A" DeviceId="72"/>
+   </Network>
+</Device>

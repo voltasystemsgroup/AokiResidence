@@ -1,0 +1,3244 @@
+	
+/*******************************************************************************************
+ Autonomic Controls, MMS IP Processor
+*******************************************************************************************/
+/*******************************************************************************************
+Revision 3.2.5
+*******************************************************************************************/
+
+#SYMBOL_NAME "Autonomic MMS IP Processor v3.2.5"
+#HINT "Released in conjunction with Autonomic MMS Control Module 3.2.5"
+#DEFAULT_VOLATILE
+#ENABLE_STACK_CHECKING
+#CATEGORY "8" // Media Resource
+#ENABLE_TRACE
+
+#DEFINE_CONSTANT ALBUMLIST 1
+#DEFINE_CONSTANT ARTISTLIST 2
+#DEFINE_CONSTANT GENRELIST 3
+#DEFINE_CONSTANT TITLELIST 4
+#DEFINE_CONSTANT PLAYLISTS 5
+#DEFINE_CONSTANT NOWPLAYING 6
+
+#DEFINE_CONSTANT MOVIETITLE 7                              
+#DEFINE_CONSTANT MOVIECHAPTER 8
+#DEFINE_CONSTANT MOVIEPERSON 9
+#DEFINE_CONSTANT MOVIEGENRE 10
+#DEFINE_CONSTANT MOVIEYEAR 11
+#DEFINE_CONSTANT MOVIERATING 12
+
+#DEFINE_CONSTANT DVRTITLE 13
+#DEFINE_CONSTANT DVRSTATION 14
+#DEFINE_CONSTANT DVRDATE 15
+#DEFINE_CONSTANT DVRGENRE 16
+#DEFINE_CONSTANT DVRRATING 17
+
+#DEFINE_CONSTANT MUSICFILTER 30
+#DEFINE_CONSTANT MOVIEFILTER 31
+#DEFINE_CONSTANT DVRFILTER 32
+#DEFINE_CONSTANT PICTUREFILTER 33
+#DEFINE_CONSTANT VIDEOFILTER 34
+
+#DEFINE_CONSTANT BUTTON_STATE_UNDEFINED -1
+#DEFINE_CONSTANT BUTTON_STATE_OFF 0
+#DEFINE_CONSTANT BUTTON_STATE_BROWSE 1
+#DEFINE_CONSTANT BUTTON_STATE_DELETE 2
+#DEFINE_CONSTANT BUTTON_STATE_MOVIES 3
+#DEFINE_CONSTANT BUTTON_STATE_VIDEO 4  
+#DEFINE_CONSTANT BUTTON_STATE_EDIT 5
+#DEFINE_CONSTANT BUTTON_STATE_NOQUEUE 6   
+
+#DEFINE_CONSTANT MEDIA_MUSIC 1 
+#DEFINE_CONSTANT MEDIA_MOVIES 2
+#DEFINE_CONSTANT MEDIA_RECORDEDTV 3
+#DEFINE_CONSTANT MEDIA_VIDEOS 4
+#DEFINE_CONSTANT MEDIA_PICTURES 5
+#DEFINE_CONSTANT MEDIA_RADIO 6   
+#DEFINE_CONSTANT MEDIA_TV 7
+#DEFINE_CONSTANT MEDIA_OTHER 8
+
+#DEFINE_CONSTANT PLAYSTATE_STOP 0
+#DEFINE_CONSTANT PLAYSTATE_PLAY 1
+#DEFINE_CONSTANT PLAYSTATE_PAUSE 2
+#DEFINE_CONSTANT PLAYSTATE_FWD 3
+#DEFINE_CONSTANT PLAYSTATE_REW 4        
+
+#DEFINE_CONSTANT PAGE_HOME 0
+#DEFINE_CONSTANT PAGE_THUMBNAILS 1
+#DEFINE_CONSTANT PAGE_DETAILS 2   
+#DEFINE_CONSTANT PAGE_LIST 3
+#DEFINE_CONSTANT PAGE_NOWPLAYING 4  
+#DEFINE_CONSTANT PAGE_MOVIE 5  
+#DEFINE_CONSTANT PAGE_MAIN 7
+
+#DEFINE_CONSTANT NEXT 0
+#DEFINE_CONSTANT PREV 1
+
+#HELP_BEGIN
+	This module contains sub-routines accessed by the Autonomic Controls MMS 3.2.5 Module.
+	It must be in your project or user directories.
+	Do not insert it directly into your program, use the AUTONOMIC CONTROLS MMS module instead.
+#HELP_END
+
+
+/*******************************************************************************************
+  DIGITAL, ANALOG and SERIAL INPUTS and OUTPUTS
+  (Uncomment and declare inputs and outputs as needed)
+*******************************************************************************************/
+
+//Inputs
+digital_input _skip_,_skip_, PrevPage;
+digital_input NextPage;
+digital_input Home;
+digital_input End;
+digital_input Connect;
+digital_input Events_Enabled;
+digital_input Go_Back;
+digital_input List_AddToQueue;
+digital_input List_PlayNow; 
+
+digital_input ThumbsUp;
+digital_input ThumbsDown;
+digital_input debug;
+digital_input setOSD;
+
+digital_input ContextButton1;
+digital_input ContextButton2;
+digital_input ContextButton3;
+digital_input ContextButton4;
+ 
+digital_input Actions;                               
+digital_input SavePlaylist;   
+digital_input Search;
+digital_input ClearQueue; 
+digital_input Zones;
+digital_input Seek_Back;
+digital_input Seek_Forward;
+
+analog_input ListItemsCount;
+analog_input ThumbnailsCount;
+analog_input From_IP_Client_Status;
+analog_input Scrollbar_Position;             
+analog_input Page_fb;                
+analog_input Direct_Volume;
+analog_input NowPlaying_Art_Height;
+analog_input NowPlaying_Art_Width;
+
+string_input Command$[256];
+string_input Instance$[64];
+string_input Service[64];
+buffer_input IP_RX$[16000];
+string_input Timestamp$[18];
+
+
+analog_input Art_Error[10];
+digital_input Dialog_Button[3];
+digital_input Title_Select[10];
+digital_input Title_AddToPlaylist[10];
+digital_input Title_PlayNow[10,10];
+
+
+
+
+//Outputs
+digital_output _skip_,_skip_, To_IP_Connect;
+digital_output Page_Home_fb;
+digital_output Page_Details_fb;
+digital_output Page_NowPlaying_fb;
+digital_output Page_Thumbnails_fb;
+digital_output Page_List_fb;    
+digital_output Page_Movie_fb; 
+digital_output Page_Message_fb;
+digital_output Page_Synopsis_fb;
+digital_output Page_Chapters_fb; 
+digital_output Page_KB_fb;
+digital_output Refresh;
+digital_output Search_Enabled_fb;              
+digital_output Dialog_Enabled_fb; 
+digital_output Alpha_Enabled_fb;    
+
+analog_output Actions_Enabled_fb;       
+analog_output ThumbsUp_Enabled_fb;
+analog_output ThumbsDown_Enabled_fb;
+analog_output Chapters_Enabled_fb;
+analog_output Dialog_Buttons;
+analog_output Shuffle_fb;
+analog_output Repeat_fb;
+analog_output Scrollbar_fb;
+analog_output Record_fb;
+analog_output Back_Enable;
+analog_output Prev_Enable;
+analog_output Next_Enable;
+analog_output Scroll_Enable;
+analog_output Current_Media_Type;
+analog_output Current_Track_Progress;
+analog_output Current_Play_State;
+analog_output Volume_fb;
+analog_output Mute_fb;             
+analog_output Browse_Art_Format;                 
+analog_output Configuraiton_fb;
+analog_output Button_State;
+analog_output alpha_val_init;
+analog_output Service_Logo_fb;
+analog_output Stars_fb;
+analog_output Scrobble_fb;
+
+string_output IP_TX$;     
+string_output Caption;        
+string_output IP_Status;
+string_output List_Position;
+string_output MetaData1$;
+string_output MetaData2$;
+string_output MetaData3$;
+string_output MetaData4$;
+string_output MetaLabel1$;
+string_output MetaLabel2$;
+string_output MetaLabel3$;
+string_output MetaLabel4$;
+string_output TrackLen_fb;
+string_output TrackTime_fb;
+string_output TrackTime_Seconds_fb;
+string_output NowPlaying_Art$; 
+string_output NowPlaying_Art_Small$; 
+string_output NowPlaying_Thumb$;
+string_output NowPlaying_Thumb_Full$;
+string_output Browse_Art$;
+string_output Playing_Track_Number;                     
+string_output MediaInfo1$;
+string_output MediaInfo2$;
+string_output MediaInfo3$;
+string_output MediaInfo4$;
+string_output MediaInfo5$;
+string_output MediaInfo6$;  
+string_output MediaInfo7$;               
+string_output MessageCaption$;
+string_output MessageText$;  
+string_output MessageValue$;
+
+string_output Context_Button_1$;
+string_output Context_Button_2$;
+string_output Context_Button_3$;
+string_output Context_Button_4$;
+
+analog_output Title_Enabled[10];
+
+string_output ButtonText[3];
+string_output ListItem$[10];
+string_output ListSubText$[10];
+string_output ListArt$[10,10];
+
+/*******************************************************************************************
+  Parameters
+*******************************************************************************************/
+INTEGER_PARAMETER artStyle;
+INTEGER_PARAMETER Seek_Delta;
+
+
+#BEGIN_PARAMETER_PROPERTIES artStyle
+   propValidUnits = unitDecimal;
+   propDefaultValue = 1d;
+   propShortDescription = "Now Playing Art Style";
+   #BEGIN_PROP_FULL_DESCRIPTION  
+   		"Set rendering style of album art (0) flat, or (1) 3D" 
+   #END_PROP_FULL_DESCRIPTION
+#END_PARAMETER_PROPERTIES
+
+
+#BEGIN_PARAMETER_PROPERTIES Seek_Delta
+   propValidUnits = unitDecimal;
+   propDefaultValue = 5d;
+   propShortDescription = "Seek delta in seconds";
+   #BEGIN_PROP_FULL_DESCRIPTION  
+   		"Time in seconds to seek back or forward when Seek_Back or Seek_Forward is pulsed" 
+   #END_PROP_FULL_DESCRIPTION
+#END_PARAMETER_PROPERTIES 
+
+/*******************************************************************************************
+  Global Variables
+*******************************************************************************************/
+Integer giBufferActive;
+Integer gbIP_IsRunning;
+Integer gbFetchingList;
+Integer gbJump;         
+Integer gbDefaultInstanceSet;
+
+Integer giListCount;
+Integer giListIndex;
+Integer giListStartPos;
+Integer giMaxListItems;
+Integer giMaxThumbnails;
+Integer giPagingValue;
+Integer giBrowsingArt;
+Integer giMoreItems;
+Integer giButtonState;
+Integer giTrackLen;
+Integer giTrackTime;
+Integer giTick;
+Integer giBusy;
+Integer giBackAvailable;
+Integer giCameFromLocalMenu;
+Integer giTotalTracks;
+Integer giBrowsingMedia;
+Integer giCtlPort[25];
+Integer giCurrentPage;               
+Integer giSearch;          
+Integer giKBUI;   
+Integer giRepeatState;
+Integer giShuffleState;       
+integer giRepeatAvailable;
+integer giShuffleAvailable;
+integer giSeekAvailable;
+integer giDirection;
+integer giSavePlaylist;
+integer giSearchActive;
+integer giUICapabilities;
+integer	giAlphaVal;
+integer giServerHandlesBack;
+integer giThumbsUp;
+integer giThumbsDown;
+integer superdebug;
+
+
+Integer supportsMusic;
+Integer supportsVideo;
+Integer supportsLiveTv;
+Integer supportsRecordedTv;
+Integer supportsEpg;
+Integer supportsMovies;
+Integer supportsPictures;
+Integer supportsRadio;
+Integer supportsVolume;
+                          
+string giBufferIn$[16384];
+string gsContext1$[15];
+string gsContext2$[15];
+string gsContext3$[15];
+string gsContext4$[15];
+
+String gsGUID[25][64];
+String gsItem[25][128];
+String gsType[25][64];
+String gsInstance[25][64];
+String gsActions[25][128]; 
+String gsListActions[25][64];
+String gsListType[16];
+String gsBrowse[64];
+String gsFilters[1024];
+String gsFiltersDesc[256];
+String gsFilterContext[6][10];
+String gsNowPlayingGuid[64];
+String gsServer[25][128];   
+String gsCast[128];                
+String gsMsgActions[3][256];  
+String gsParentType[128];
+String gsArtServer[256];
+String gsNowPlayingSource[64];
+String seekBuilder[20];
+
+
+
+Structure Struct_History
+{	
+	string command[256];
+	string filters[1024];    
+	string description[256];      
+	integer context;
+	integer page;
+};
+  
+Struct_History History[5];
+
+/*******************************************************************************************
+  Functions
+*******************************************************************************************/
+   
+function getContextButtonStates()
+{
+
+	//Button 1
+	if (giCurrentPage <> PAGE_NOWPLAYING)
+	{
+		gsContext1$ = "Now Playing";
+	}
+	else
+	{
+		if (giCurrentPage = PAGE_NOWPLAYING && Current_Play_State <> PLAYSTATE_STOP)
+		{
+			gsContext1$ = "Now Playing";
+		}
+		else
+		{
+			gsContext1$ = "Now Playing";	
+		}
+	}
+
+	//Button 2
+	if (giCurrentPage = PAGE_LIST && gsBrowse = "NowPlaying")
+	{
+		if (giListCount > 0)
+		{
+			gsContext2$ = "Save Playlist";
+		}
+		else
+		{
+			gsContext2$ = "";         
+		}
+	}	
+	else
+	{
+		//gsContext2$ = "Zones";
+   	
+		if (Current_Play_State <> PLAYSTATE_STOP)
+		{
+			gsContext2$ = "Actions";
+		}
+		else
+		{
+			gsContext2$ = "";	
+		}
+	}
+
+	//Button 3
+    if ( (giCurrentPage = PAGE_LIST || giCurrentPage = PAGE_THUMBNAILS) && (giSearch = on))
+	{
+		gsContext3$ = "Search";
+	}
+	else
+	{
+		if (giCurrentPage = PAGE_LIST && gsBrowse = "NowPlaying")
+		{
+			gsContext3$ = "Clear Queue";
+        }
+		else
+		{
+			gsContext3$ = "Favorites";
+        }
+	}
+
+	//Button 4
+
+	if (giCurrentPage <> PAGE_HOME)
+	{
+		gsContext4$ = "Controls";
+	}
+	else
+	{
+		gsContext4$ = "";
+    }
+
+    Context_Button_1$ = gsContext1$;
+	Context_Button_2$ = gsContext2$;
+	Context_Button_3$ = gsContext3$;
+	Context_Button_4$ = gsContext4$;
+  
+     
+}
+
+function showHistory()
+{
+	integer i;
+	if (debug=on)
+	{
+		
+		print("************************************************************************\n");
+		for (i=0 to 5)
+		{
+			print("History-%d cmd:%s desc:%s\n",i,history[i].command,history[i].description);
+		}
+		print("************************************************************************\n");
+		
+	}
+} 
+
+function clearTransport()
+{
+	MetaData1$="";
+	MetaData2$="";
+	MetaData3$="";
+	MetaData4$="";
+
+	TrackLen_fb="";
+	TrackTime_fb="";
+	NowPlaying_Art$="";
+}
+
+function clearList()
+{
+	integer i;
+	for (i=1 to max(giMaxListItems,giMaxThumbnails)) 
+	{
+		Title_Enabled[i]=off;
+		ListArt$[i]="";
+		ListItem$[i]="";  //  clear list text
+		ListSubText$[i]="";  //  clear list time (will be sub text)
+		gsActions[i]="";
+		gsListActions[i]="";
+	} 
+}
+
+function clearAll()
+{
+	clearList();
+	clearTransport();
+}                 
+
+function clearInfo()
+{
+	MediaInfo1$="";
+	MediaInfo2$="";
+	MediaInfo3$="";
+	MediaInfo4$="";
+	MediaInfo5$="";
+	MediaInfo6$="";
+	MediaInfo7$="";
+}
+	
+
+string_function getArtURL(string sGUID)
+{
+	string url$[256];
+	
+	url$ = gsArtServer + "getart?guid=" + sGuid + "&h=112&w=112&c=2&fmt=png&nolabel=1&ticks=" + itoa(getTicks()) + "&.png";
+	//url$ = gsArtServer + "getart?guid=" + sGuid + ".jpg";
+	return(url$);
+}
+
+string_function parseServerName(string sName) {
+
+	string newName[128];
+	integer t1;
+	integer t2;
+	
+	t1 = find("@",sName);
+	t2 = reversefind("@",sName);
+	
+	if (t1>0) {
+		newName = left(sName,t1-1);
+		newName = newName + " on ";
+		newName = newName + mid(sName,t2+1,len(sName) - t2);
+	} else {
+		newName = sName;
+	};
+	
+	return(newName);
+}
+
+integer_function getListItemsCount(String In$)
+{
+	integer iPos;
+	string sCount[5];
+	
+	iPos = find("Total=",In$);
+	
+	if (iPos <> 0 && (len(In$) > iPos+5))
+	{
+		sCount = mid(In$,iPos+6,4);
+		return (atoi(sCount));
+	}
+	else
+	{
+		return (0);
+	}
+}   
+
+integer_function getListStart(string In$)
+{
+
+	integer iPos;
+	string sStart[5];
+
+	iPos = find("Start=",In$);
+
+	if (iPos <> 0 && (len(In$) > iPos+5))
+	{
+		sStart = mid(In$,iPos+6,4);
+		return (atoi(sStart));
+	}
+	else
+	{
+		return (0);
+	}
+}
+
+integer_function getAlphaEnable(string In$)
+{
+
+	integer iPos;
+	string sStart[5];
+
+	iPos = find("Alpha=",In$);
+
+	if (iPos <> 0 && (len(In$) > iPos + 5))
+	{
+
+		sStart = mid(In$, iPos+6, 1);
+		return (atoi(sStart));
+	}
+	else
+	{
+		return(0);
+	}
+}
+
+
+function pageFlip(integer page)
+{
+	if (giCurrentPage <> page)
+	{
+		switch(page)
+		{
+			case (PAGE_THUMBNAILS): {pulse(10,page_thumbnails_fb);}
+			case (PAGE_LIST): {pulse(10,page_list_fb);}
+			case (PAGE_HOME): {pulse(10,page_home_fb); }      
+			case (PAGE_DETAILS): {pulse(10,page_details_fb);}
+			case (PAGE_NOWPLAYING): {pulse(10,page_nowplaying_fb);} 
+			case (PAGE_MOVIE): {pulse(10,page_movie_fb);}
+		}            
+	}
+	
+	giCurrentPage = page;
+	
+	getContextButtonStates();
+
+		
+}
+
+function ProcessNewList(String In$)
+{
+	string sToken[128];
+	integer ilast;
+	integer addicon; 
+	integer t1,t2;    
+	 
+	clearList();
+	//determine the type of list
+	sToken = mid(In$,6,128);
+	gsBrowse = left(sToken, find("Total",sToken)-2);
+	
+	//get the list title.
+	t1 = find("Caption=",In$);
+	t2 = find(chr(34),In$,t1+9);
+	
+	if (t1>0)
+	{
+		if (debug = On) print ("Caption found");
+		t1 = t1 + 9;
+		gsFiltersDesc = mid(In$,t1,t2-t1);
+	}
+
+	if (debug = On) print ("In: %s\n",gsFiltersDesc);
+	if (debug = On) print ("Filter Description: %s\n",gsFiltersDesc);
+
+	
+	//set flags 
+	giListCount = GetListItemsCount(In$);
+	gbFetchingList=On;
+	giListIndex=0;
+	
+	// mh... get start position of list
+	giListStartPos = getListStart(In$);
+	
+	
+	//Check for Alpha Browse
+	Alpha_Enabled_fb = getAlphaEnable(In$);
+
+	//Page Flips
+
+	Switch(1)
+	{
+
+		case (gsBrowse = "Albums"):			{pageFlip(PAGE_THUMBNAILS); giPagingValue = giMaxThumbnails; giBrowsingArt = 1; giSearch = on;}
+		case (gsBrowse = "Artists"):		{pageFlip(PAGE_THUMBNAILS); giPagingValue = giMaxThumbnails; giBrowsingArt = 1; giSearch = on;}
+		case (gsBrowse = "Genres"):			{pageFlip(PAGE_THUMBNAILS); giPagingValue = giMaxThumbnails; giBrowsingArt = 1; giSearch = on;}
+		case (gsBrowse = "MovieTitles"):	{pageFlip(PAGE_THUMBNAILS); giPagingValue = giMaxThumbnails; giBrowsingArt = 1; giSearch = on;}
+		case (gsBrowse = "Pictures"):		{pageFlip(PAGE_THUMBNAILS); giPagingValue = giMaxThumbnails; giBrowsingArt = 1; giSearch = off;}
+		case (gsBrowse = "Videos"):			{pageFlip(PAGE_THUMBNAILS); giPagingValue = giMaxThumbnails; giBrowsingArt = 1; giSearch = off;}
+		case (gsBrowse = "DvrTitles"):		{pageFlip(PAGE_THUMBNAILS); giPagingValue = giMaxThumbnails; giBrowsingArt = 1; giSearch = on;}
+		case (gsBrowse = "RadioStations"):	{pageFlip(PAGE_THUMBNAILS); giPagingValue = giMaxThumbnails; giBrowsingArt = 1; giSearch = on;}
+		case (gsBrowse = "Favorites"):		{pageFlip(PAGE_THUMBNAILS); giPagingValue = giMaxThumbnails; giBrowsingArt = 1; giSearch = off;}	
+		case (gsBrowse = "Titles"):			{pageFlip(PAGE_LIST); giPagingValue = giMaxListItems; giBrowsingArt = 0; giSearch = on;}
+		case (gsBrowse = "MovieChapters"):	{	
+												
+												pageFlip(PAGE_MOVIE); 
+												giPagingValue = giMaxListItems;  
+												giBrowsingArt = 0; 
+												Search_Enabled_fb = off;
+												if (giListCount > 0)
+												{
+													pulse(10,Page_Chapters_fb);
+													Chapters_Enabled_fb = On;
+												}
+												else
+												{
+                                                    pulse(10,Page_Synopsis_fb);
+													Chapters_Enabled_fb = Off;
+												}  
+	
+												giSearch = off;
+											}
+		case (gsBrowse = "MoviePeople"):	{pageFlip(PAGE_LIST); giPagingValue = giMaxListItems; giBrowsingArt = 0; giSearch = on;}
+		
+		default:							{pageFlip(PAGE_LIST); giPagingValue = giMaxListItems; giBrowsingArt = 0; giSearch = off;}
+		
+	}             
+	
+	if (gsFiltersDesc = "") gsFiltersDesc = gsBrowse;
+		
+	
+	//mark position
+	ilast=giListStartPos+giPagingValue-1;
+	if (ilast>giListCount) ilast=giListCount;
+	
+	//feedback
+	List_Position = itoa(giListStartPos) + "-" + itoa(ilast) + " of " + itoa(giListCount);
+	if (giListCount = 0)
+	{
+		Caption = "No Items Found.";
+		List_Position = "";
+		Scrollbar_fb = 65535;
+		if (gsBrowse = "MovieChapters") 
+		{
+			pageFlip(PAGE_MOVIE);
+		}
+	}
+	else
+	{
+		Scrollbar_fb = 65535-((65535 / giListCount) * giListStartPos);
+				
+	
+		if (gsBrowse="NowPlaying") 
+		{	gsFiltersDesc = "Now Playing List";
+			giButtonState = BUTTON_STATE_DELETE;  
+			if (giListCount=0) clearTransport();
+		}
+		
+		else if (left(gsBrowse,8)="Instance")
+		{
+			gsFiltersDesc = "Available Media Sources";
+		}
+		
+		else if (left(gsBrowse,9)="DvrTitles")
+		{                                       
+			giButtonState = BUTTON_STATE_VIDEO;
+		}                                     
+		
+		else if (left(gsBrowse,5)="Movie")
+		{
+			giButtonState = BUTTON_STATE_MOVIES;
+			gsFiltersDesc = "Movies";
+		}
+		
+		else
+		{
+			giButtonState = BUTTON_STATE_BROWSE;
+		}
+		
+		if (gsFiltersDesc<>"") Caption = gsFiltersDesc;       
+		if (debug = On) print ("Filter Description: %s\n",gsFiltersDesc);
+
+	}	     
+}
+
+string_function GetField (string In$)
+{
+	integer ibyte, iInString, iInEscape;
+	string sGather[2048];
+	
+	iInString=off;
+	iInEscape=off;
+	
+	While (left(In$,1)=" ") {ibyte=getc(In$);}
+	
+	Do
+	{
+		ibyte=getc(In$);
+		
+		switch(1)
+		{
+			//term on space, unless in a quoted string
+			case(ibyte=32): 
+			{	if (iInString=Off)
+				{	ibyte=65535;
+				}
+				else sGather = sGather + " "; 
+			}
+			
+			//handle escape character
+			case(ibyte='\"'):
+			{	if (iInString=On)
+				{	if (iInEscape=On)
+					{	sGather = sGather + "\"";
+						iInEscape=Off;
+					}
+					else
+					{	ibyte=65535;
+					}
+				}
+				else
+				{	iInString=On;
+				}
+			}
+						
+			case (ibyte='\\'):
+			{	if (iInEscape=On)
+				{	sGather = sGather + "\\";
+				    iInEscape=Off;
+				}
+				else if (iInString=On)
+				{	iInEscape=On;
+				}
+			}
+			
+			default:
+			{	if (ibyte<>65535 && len(sGather)<2048)
+				{					
+					sGather=sGather+chr(ibyte); 
+					iInEscape=Off;
+				}     
+				else
+				{
+					ibyte = 65535;
+				}
+			}
+		}
+		
+	} until (ibyte=65535);
+	
+	return(sGather);			
+}  
+
+function getKBInputUI(string parms)                 
+{   
+
+	string guid[64];
+    string caption[128];
+    string message[256];
+    string timeout[8];
+    string value[256];
+    
+    guid = getField(parms);
+    caption = getField(parms);
+    message = getField(parms);
+	value = getField(parms);
+	timeout = getField(parms);
+
+	
+
+
+    gsMsgActions[1] = getField(parms); 
+    if (debug<>0) print ("Ack Action: %s\r",gsMsgActions[1]);
+        
+	//Set the default text
+	MessageText$ = message;
+	MessageCaption$ = caption;  
+	MessageValue$ = value;
+		
+		
+	//Display the KB
+	pulse(10,Page_KB_fb);
+	
+	//Set semiphore to indicate server driven request
+	giKBUI = on;
+}
+         
+
+integer_function getFirstChar(String In$)
+{
+
+	string temp$[128];
+
+	integer temp;
+
+	if (find("The ",In$))
+		temp$ = remove("The ", In$, 1);
+	else if (find("A ", In$))
+		temp$ = remove("A ", In$);
+   
+	temp = getc(In$);
+
+	if (debug = On) print("Character is %S\x0D", itoa(temp));
+
+	return(temp);
+}
+
+
+
+function ProcessListItem(String In$)
+{
+	string sType[25],sSubText[255],sURL[256],sTrash[64],sPort[5];
+	string sTime[24],sArtist[255],sAlbum[255],sTrack[255];
+	string description[128];
+	string icon[3];
+	string hasChildren[3];
+	string action[128];
+	string temp$[512];
+
+	integer listIndex, p1, p2;
+
+	listIndex = giListIndex;
+	
+	giListIndex=giListIndex+1;
+	In$ = right(In$,len(In$)-2);
+
+	gsType[giListIndex] = GetField(In$);
+	gsGuid[giListIndex] = GetField(In$);
+	if (left(gsGuid[giListIndex],1)="{") gsGuid[giListIndex] = mid(gsGuid[giListIndex],2,len(gsGuid[giListIndex])-2);
+	gsItem[giListIndex] = GetField(In$);
+
+
+	//If the guid and the item are blank, this must be an instance.
+	if (gsGuid[giListIndex] = "" && gsItem[giListIndex] = "")
+	{
+		gsItem[giListIndex] = gsType[giListIndex];
+		gsType[giListIndex] = "Instance";                 
+		giButtonState = BUTTON_STATE_NOQUEUE;
+	}
+	
+	//Get Time for Titles
+	else if (gsType[giListIndex] = "Title") 
+	{	
+		//sSubText = GetField(In$);
+		sTime = GetField(In$);
+		sTrack = GetField(In$);
+		sArtist = GetField(In$);
+		sAlbum = GetField(In$);
+		
+		if (sTime <> "00:00:00")  
+		{
+			if (left(sTime,3)="00:") sTime = mid(sTime,4,5);
+			if (left(sTime,1)="0") sTime = mid(sTime,2,4);
+		}
+		else
+		{
+			sTime="";
+		}
+        
+        sSubText = sArtist + "  " + sTime;
+        
+		icon = getField(In$);
+
+		gsActions[giListIndex] = getField(In$);
+		gsListActions[giListIndex] = getField(In$);
+	}
+	
+	//Parse out artist name for albums.
+	else if (gsType[giListIndex] = "Album")
+	{
+		p2 = reversefind(")",gsItem[giListIndex]);
+		if (p2<>0) p1 = reversefind("(",gsItem[giListIndex],p2-1);
+		if (p1<>0 && p2>(p1+1))
+		{
+			sSubText = Mid(gsItem[giListIndex],p1+1,(p2-p1)-1);
+			gsItem[giListIndex] = left(gsItem[giListIndex],p1-1);
+		}      
+		
+		icon = getField(In$);
+		gsListActions[giListIndex] = getField(In$);
+		gsActions[giListIndex] = getField(In$); 
+		
+	}
+	
+	//InstanceEX
+	else if (gsType[giListIndex] = "InstanceInfoEx") 
+	{
+		sPort = GetField(In$);
+		sTrash = GetField(In$);               
+		sSubText="";
+		gsServer[giListIndex] = GetField(In$);
+		if (debug=on) print ("Server:%s\n",gsServer[giListIndex]);
+		if (debug=on) print ("Item:%s\n",gsItem[giListIndex]);
+		giCtlPort[giListIndex] = atoi(sPort);
+		gsInstance[giListIndex] = left(gsItem[giListIndex],reversefind("@",gsItem[giListIndex])-1);
+		gsItem[giListIndex] = parseServerName(gsItem[giListIndex]);                   
+		giButtonState = BUTTON_STATE_NOQUEUE;
+	}   
+	
+	//Capture Radio Station Information
+    else if (gsType[giListIndex] = "RadioStation")
+    {
+	
+		description = getField(In$);
+		icon = getField(In$);
+		action = getField(In$);
+		gsListActions[giListIndex] = getField(In$);
+		
+		giButtonState = BUTTON_STATE_NOQUEUE;
+		
+		/*
+		if (icon="6")
+		{
+			giButtonState = BUTTON_STATE_EDIT;
+		} 
+		else if(icon="-1")
+		{
+			giButtonState = BUTTON_STATE_NOQUEUE;
+		}
+		else
+		{
+			giButtonState = BUTTON_STATE_OFF;
+		}
+		*/
+
+		
+		if (action<>"") gsActions[giListIndex] = action;
+	}
+        
+    //Favorites
+	else if (gsType[giListIndex] = "Favorite")
+	{
+		description = getField(In$);
+		icon = getField(In$);
+		gsActions[giListIndex] = getField(In$);
+		gsListActions[giListIndex] = getField(In$);
+		giButtonState = BUTTON_STATE_DELETE;
+	}
+
+    //EPG   
+	else if (gsType[giListIndex] = "EpgStation") 
+	{
+		sSubText="";
+		gsItem[giListIndex] = GetField(In$) + " " + gsItem[giListIndex]; //Channel
+		sTrash = GetField(In$); //Station Name
+		gsItem[giListIndex] = gsItem[giListIndex] + " " + GetField(In$);  //Program
+	}
+		
+	//Videos and Pictures
+	else if (gsType[giListIndex] = "PictureFile" || gsType[giListIndex] = "VideoFile" || gsType[giListIndex] = "PictureFolder" || gsType[giListIndex] = "VideoFolder") 
+	{
+		sSubText="";
+		gsItem[giListIndex]= GetField(In$);
+		
+		if (gsType[giListIndex] = "VideoFolder")
+		{
+			giButtonState = BUTTON_STATE_NOQUEUE;
+		}
+		else
+		{
+		    giButtonState = BUTTON_STATE_VIDEO;
+		}
+		
+		icon = getField(In$);
+		gsListActions[giListIndex] = getField(In$);
+		gsActions[giListIndex] = getField(In$); 
+
+	}		      
+	
+	//Filters, RadioSource
+	else if (find("Filter",gsType[giListIndex]) > 0 || find("RadioSource",gsType[giListIndex]) > 0)
+	{
+		giButtonState = BUTTON_STATE_NOQUEUE;
+		icon = getField(In$);
+		gsActions[giListIndex] = getField(In$); 
+		gsListActions[giListIndex] = getField(In$);
+
+	}  
+	
+	else if (gsType[giListIndex] = "PickListItem")
+	{
+		//giButtonState = BUTTON_STATE_NOQUEUE;
+		hasChildren = getField(In$);
+		icon = getField(In$);
+		gsActions[giListIndex] = getField(In$);
+		gsListActions[giListIndex] = getField(In$);
+		
+		if (icon="6")
+		{
+			giButtonState = BUTTON_STATE_EDIT;
+		}
+		else if(icon="2")
+		{
+			giButtonState = BUTTON_STATE_DELETE;
+		} 
+		else if(icon="-1" || icon="0")
+		{
+			giButtonState = BUTTON_STATE_NOQUEUE;
+		}
+		else
+		{
+			giButtonState = BUTTON_STATE_OFF;
+		}
+		
+	}
+	
+	else if (gsType[giListIndex] = "RadioGenre")
+	{
+		giButtonState = BUTTON_STATE_NOQUEUE;
+	}
+	
+	
+	//Feedback
+	ListItem$[giListIndex] = gsItem[giListIndex];
+
+	if (listIndex = 1)
+	{
+
+		temp$ = gsItem[listIndex];
+		Alpha_Val_init = getFirstChar(temp$);
+
+	}                    
+
+	ListSubText$[giListIndex] = sSubText;
+	if (giBrowsingArt = 1) 
+	{      
+		sURL = getArtURL(gsGuid[giListIndex]);
+		ListArt$[giListIndex] = sURL;
+	}
+		
+	//Enable the button.
+	Title_Enabled[giListIndex]=giButtonState;
+}                
+
+function processMovieProperty(String In$)
+{
+    string trash[25], property[12], value[2048], chunk[255];
+    integer t1;
+        
+	trash = GetField(In$);
+	value = GetField(In$);
+	t1 = find("=",value);
+	property = left(value,t1-1);
+	value = mid(value,t1+1,len(value)-t1);       
+			
+	switch (1)
+	{
+		case (property="Actors"):	
+		{
+			value = left(value,reversefind(";",value,128)-1);
+			MediaInfo6$ = value;
+		}
+		case (property="Synopsis"):
+		{
+			
+			if (len(value) > 600)
+			{
+				value=left(value,600);
+				value = left(value,reversefind(".",value));
+			}    
+			else
+			{
+				print("Value Length = %i",len(value));
+			}
+			MediaInfo7$ = "";  
+			while (len(value) > 0)
+			{
+				if (len(value)>100)
+				{
+					chunk = removebylength(100, value);			    
+				}
+				else
+				{
+					chunk = value;
+					value = "";
+				}
+				
+				MediaInfo7$ = "\xFE\x02" + chunk;      
+			}   
+		}
+		case (property="Name"): MediaInfo1$ = value;
+		case (property="Genre"): MediaInfo2$ = value;
+		case (property="Rating"): MediaInfo3$ = value;
+		case (property="Minutes"): MediaInfo4$ = value + " Minutes";
+		case (property="Year"): MediaInfo5$ = value;  
+	}
+}
+
+function ProcessListEnd()
+{
+	integer i;
+	
+	Next_Enable = giMoreItems;
+	Scroll_Enable = (Next_Enable || Prev_Enable);
+
+	for (i=giListIndex+1 to max(giMaxListItems,giMaxThumbnails))
+	{
+		Title_Enabled[i]=0;
+	}
+
+	gbFetchingList=Off;
+	giBusy=Off;               
+	
+	Search_Enabled_fb = off;
+	Search_Enabled_fb = giSearch; 
+
+	getContextButtonStates();
+            
+	if (debug = On) Print("List processed");
+}
+
+integer_function stob(string bool$)
+{
+	switch(1)
+	{
+		case (bool$ = "True" || bool$ = "T" || bool$ = "t" || bool$ = "1"):	return (on);
+		default: return (off);
+	}
+}
+
+string_function MakeTimeString(string secs$)
+{
+	
+	string time$[10];
+	integer hour, mins, sec;
+	
+	sec = atoi(secs$);
+	mins = sec / 60;
+	sec = sec MOD 60;
+	hour = mins / 60;
+	mins = mins MOD 60;
+	
+	if (hour>0) {makestring (time$,"%i:%02i:%02i",hour,mins,sec);} 
+		else	{makestring (time$,"%i:%02i",mins,sec);}
+	
+	return (time$);
+}
+
+function SetTrackLen(string secs$)
+{
+	giTrackLen = atoi(secs$);
+	TrackLen_fb = MakeTimeString(secs$);
+}
+
+function SetTrackTime(string secs$)
+{
+	giTrackTime = atoi(secs$);
+	TrackTime_Seconds_fb = secs$;
+	TrackTime_fb = MakeTimeString(secs$);
+	
+	if (giTrackLen<>0)
+	{Current_Track_Progress = (65535 / giTrackLen) * giTrackTime;}
+	else
+	{Current_Track_Progress = 0;}
+
+	giTick=giTick+1;
+	if (giTick>=600 && giKBUI <> On)
+	{	
+		pageFlip(PAGE_NOWPLAYING);
+		Search_Enabled_fb = off;
+		giTick=0;
+	}
+}         
+
+function showMessageBox (string parms)
+{
+    string guid[128];
+    string caption[256];
+    string message[1024];
+    string timeout[8];
+    string action[128];
+    string buttonCaption[64];
+    string defaultButton[3];
+    integer i;   
+    integer buttons;
+    
+	guid = getField(parms);
+    caption = getField(parms);
+    message = getField(parms);
+    timeout = getField(parms);
+    
+    if (debug=on)
+    {
+		print ("guid: %s", guid);
+		print ("caption: %s",caption);
+		print ("message: %s",message);
+		print ("timeout: %s",timeout);
+	}
+    
+    MessageCaption$ = caption;
+    MessageText$ = left(message,250);
+    
+    for (i=1 to 3)
+    {
+		if (len(parms)>0)
+		{
+		    buttonCaption = getField(parms);
+		    action = getField(parms);
+		    defaultButton = getField(parms);
+		    gsMsgActions[i]= action;
+		    ButtonText[i] = buttonCaption;
+		    buttons = i;
+		}
+	}
+    
+    Dialog_Buttons = buttons;
+    Dialog_Enabled_fb = on;
+}                       
+
+function showInstantMessageBoxWait()
+{
+    wait(500, messageBoxDisplay)
+    {
+    	Dialog_Enabled_fb = off;
+    }
+}
+
+function showInstantMessageBox (string caption, string message)
+{
+
+   cancelwait (messageBoxDisplay);
+
+   MessageCaption$ = caption;
+   MessageText$ = message;
+   Dialog_Buttons = 0;
+   Dialog_Enabled_fb = on;
+
+   showInstantMessageBoxWait();   
+}
+
+function clearDialogs(){
+	integer g;
+	
+	Dialog_Enabled_fb = off;
+	for (g = 1 to 3){
+		ButtonText[g]="";
+	}
+
+	MessageCaption$="";
+	MessageText$="";
+
+}
+
+
+function Refresh_NowPlaying_Art()
+{
+	if (artStyle=0)
+		NowPlaying_Art$ = gsArtServer + "getart?guid=" + gsNowPlayingGUID + "&h=" + itoa(NowPlaying_Art_Height) + "&w=" + itoa(NowPlaying_Art_Width) + "&c=1&fmt=png&tod=" + Timestamp$ + "&.png";
+	else
+		NowPlaying_Art$ = gsArtServer + "getart?guid=" + gsNowPlayingGUID + "&h=" + itoa(NowPlaying_Art_Height) + "&w=" + itoa(NowPlaying_Art_Width) + "&c=1&rfle=3&rflh=30&rflo=70&rz=15&fmt=png&tod=" + Timestamp$ + "&.png";
+	
+	NowPlaying_Art_Small$ = gsArtServer + "getart?guid=" + gsNowPlayingGUID + "&h=130&w=91&c=1&rfle=3&rflh=30&rflo=40&rz=15&fmt=png&tod=" + Timestamp$ + "&.png";
+	NowPlaying_Thumb$ = gsArtServer + "getart?guid=" + gsNowPlayingGUID + "&h=107&w=107&c=1&fmt=png&tod=" + Timestamp$ + "&.png";  
+	NowPlaying_Thumb_Full$ = gsArtServer + "getart?guid=" + gsNowPlayingGUID + "&h=" + itoa(NowPlaying_Art_Height) + "&w=" + itoa(NowPlaying_Art_Width) + "&c=1&fmt=png&tod=" + Timestamp$ + "&.png";
+}
+
+function Refresh_Browsing_Art(string sGUID)
+{
+	//Browse_Art$ = gsArtServer + "getart?guid=" + sGUID + ".jpg";
+	Browse_Art$ = gsArtServer + "getart?guid=" + sGUID + "&h=200&w=156&c=1&rfle=3&rflh=30&rflo=40&rz=15&fmt=png&tod=" + Timestamp$ + "&.png";
+}
+    
+integer_function supportsMusicOnly()
+{
+	return (supportsMusic && supportsVideo = off && supportsRecordedTv = off &&	supportsMovies = off && supportsPictures = off);
+}
+		
+function updateUICapibilities()
+{             
+	
+	giUICapabilities = supportsMusicOnly();
+	Configuraiton_fb = giUICapabilities;
+	if (giUICapabilities=off) 
+	{
+		pageFlip (PAGE_NOWPLAYING); 
+	}
+	else
+	{
+		pageFlip(PAGE_NOWPLAYING);
+		giBrowsingMedia=MEDIA_MUSIC;
+	}
+}
+	
+function DoCommand(string cmd$)
+{
+	
+	string newfilter$[256];
+	
+	//first issue the command;
+	if (debug=ON) print ("%s\n",cmd$);
+
+	
+	if (From_IP_Client_Status = 2 ) {
+		IP_TX$ = cmd$ + "\x0D\x0A";
+
+		}
+   	
+	//activity detection.
+	giTick=0;
+	
+	//yeild 
+	Processlogic();
+}
+
+function ParseStateChange(string in$)
+{
+	string session$[128];
+	string parm$[64];
+	string value$[1536];
+	string cmd$[64];
+    string type[16];
+
+	integer t1, t2, t3;
+	integer g;
+	
+	t1 = find(" ",in$);
+	t2 = find(" ",in$,t1+1);
+	t3 = find("=",in$,t2+1);
+	
+	session$ = left(in$,t1-1);
+	parm$ = mid(in$,t2+1,t3-t2-1);
+	value$ = right(in$,len(in$)-t3);
+
+	switch (1)
+	{
+					
+		case (parm$ = "Back"):
+		{
+			if (Value$ = "False"){
+				giBackAvailable = 0;
+				Back_Enable = 1;
+			} else {
+				giBackAvailable = 1;
+				Back_Enable = 1;
+			}
+			
+			giServerHandlesBack = 1;
+		}
+
+		case (parm$ = "BaseWebUrl"):
+		{	 
+			gsArtServer = Value$;
+		
+			//strip port 80 from string because Crestron iPad isn't compatible with port delimeter ":" 
+			if (right(gsArtServer,4) = ":80/") gsArtServer = Left(gsArtServer,len(gsArtServer)-4) + "/";
+		}
+				
+		case (parm$ = "ContextMenu"): Actions_Enabled_fb = stob(value$);
+		
+		case (parm$="MediaArtChanged"):	Refresh_NowPlaying_Art();
+
+		case (parm$="MediaControl"):
+		{   switch (1)
+			{   case (Value$="Stop"):	 Current_Play_State=PLAYSTATE_STOP;
+				case (Value$="Play"): 	 Current_Play_State=PLAYSTATE_PLAY;
+				case (Value$="Pause"):	 Current_Play_State=PLAYSTATE_PAUSE;
+				case (Value$="FF1"):	 Current_Play_State=PLAYSTATE_FWD;
+				case (Value$="FF2"):	 Current_Play_State=PLAYSTATE_FWD;
+				case (Value$="FF3"):	 Current_Play_State=PLAYSTATE_FWD;
+				case (Value$="Rewind1"): Current_Play_State=PLAYSTATE_REW;
+				case (Value$="Rewind2"): Current_Play_State=PLAYSTATE_REW;
+				case (Value$="Rewind3"): Current_Play_State=PLAYSTATE_REW;
+			}
+
+			getContextButtonStates();
+		}
+
+		case (parm$="MetaData1"): MetaData1$ = Value$; 
+		case (parm$="MetaData2"): MetaData2$ = Value$; 
+		case (parm$="MetaData3"): MetaData3$ = Value$;
+		case (parm$="MetaData4"): MetaData4$ = Value$;
+
+		case (parm$="MetaLabel1"): MetaLabel1$ = Value$; 
+		case (parm$="MetaLabel2"): MetaLabel2$ = Value$; 
+		case (parm$="MetaLabel3"): MetaLabel3$ = Value$;
+		case (parm$="MetaLabel4"): MetaLabel4$ = Value$;
+		
+		case (parm$="Mute"):Mute_fb = abs(stob(value$));
+
+		case (parm$="NowPlayingType"):
+		{	
+			switch(1)
+			{
+				case (Value$="Music"):		
+				{
+					Current_Media_Type=MEDIA_MUSIC; 
+					if (Configuraiton_fb = off) doCommand("navigate nowplaying");
+				}
+				case (Value$="Movie"):		Current_Media_Type=MEDIA_MOVIES;
+				case (Value$="Dvr"):		Current_Media_Type=MEDIA_RECORDEDTV;
+				case (Value$="Pictures"):	Current_Media_Type=MEDIA_PICTURES;
+				case (Value$="Video"):		Current_Media_Type=MEDIA_VIDEOS;
+				case (Value$="LiveTv"):		Current_Media_Type=MEDIA_OTHER;
+				default:					Current_Media_type=MEDIA_OTHER;
+			}
+		}
+		
+		case (parm$="NowPlayingGuid"): 
+		{	
+			if (left(Value$,1)="{") Value$=mid(Value$,2,len(Value$)-2);
+			gsNowPlayingGUID=Value$;
+		}
+
+		case (parm$ = "NowPlayingSrce"):
+		{	
+			gsNowPlayingSource = Value$;
+			//TODO : SCROBLE enableButton('btLastFM',val=='LastFM');
+			
+			switch(1)
+			{
+				case (Value$ = "LastFM"):		Service_Logo_fb = 1;
+				case (Value$ = "Pandora"):		Service_Logo_fb = 2;
+				case (Value$ = "Sirius"):		Service_Logo_fb = 3;
+				case (Value$ = "Rhapsody"):		Service_Logo_fb = 4;
+				case (Value$ = "Spotify"):		Service_Logo_fb = 5;
+				case (Value$ = "RadioTime"):	Service_Logo_fb = 6;
+				default:						Service_Logo_fb = 0;
+			}
+			
+
+			ThumbsUp_Enabled_fb=(giThumbsUp+1)+(3*(gsNowPlayingSource="LastFM") + (6*(gsNowPlayingSource="Rhapsody")));
+			ThumbsDown_Enabled_fb=(giThumbsDown+1)+(3*(gsNowPlayingSource="LastFM") + (6*(gsNowPlayingSource="Rhapsody")));
+		}
+
+		case (parm$="Recording"):  Record_fb = abs(stob(value$));
+		
+		case (parm$="Repeat"): 
+		{
+			giRepeatState = abs(stob(value$));
+			if (giRepeatAvailable) Repeat_fb = giRepeatState;
+		}
+		
+		case (parm$ = "RepeatAvailable"):
+		{
+			giRepeatAvailable = (abs(stob(value$))=on);
+			if (giRepeatAvailable=on)
+			
+			{ 
+				Repeat_fb = giRepeatState;
+			}
+			else
+			{
+				Repeat_fb = 2;
+			}
+		}
+		
+		case (parm$="Scrobbling"):
+		{
+			
+			if (value$ = "-1") Scrobble_fb = 0; else Scrobble_fb = atoi(value$) + 1;
+		
+			if (value$="1")
+			{
+				//showInstantMessageBox("Last.fm Scrobbling", "Last.fm Scrobbling Enabled");
+			}
+			else
+			{
+				//showInstantMessageBox("Last.fm Scrobbling", "Last.fm Scrobbling Disabled");
+			}
+			
+		}
+		case (parm$="Shuffle"): 
+		{
+			giShuffleState = abs(stob(value$));
+			if (giShuffleAvailable=on) Shuffle_fb = giShuffleState;
+		}
+		
+		case (parm$="ShuffleAvailable"):
+		{
+			giShuffleAvailable = abs(stob(value$));
+			if (giShuffleAvailable=on)
+			{ 
+				Shuffle_fb = giShuffleState;
+			}
+			else
+			{
+				Shuffle_fb = 2;
+			}     
+		}
+
+		case (parm$="SeekAvailable"):
+		{
+			giSeekAvailable = abs(stob(value$));
+		}
+
+		case (parm$="SupportsMusic"):		supportsMusic = abs(stob(value$));
+		case (parm$="SupportsVideos"):		supportsVideo = abs(stob(value$));
+		case (parm$="SupportsLiveTv"):		supportsLiveTv = abs(stob(value$));
+		case (parm$="SupportsRecordedTv"):	supportsRecordedTv = abs(stob(value$));
+		case (parm$="SupportsEpg"):			supportsEpg = abs(stob(value$));
+		case (parm$="SupportsMovies"):		supportsMovies = abs(stob(value$));
+		case (parm$="SupportsPictures"):	supportsPictures = abs(stob(value$));
+		case (parm$="SupportsRadio"):		supportsRadio = abs(stob(value$));
+		case (parm$="SupportsVolumeUpDown"):supportsVolume = abs(stob(value$));
+		case (parm$="SupportsStatus"):		updateUICapibilities(); 
+	
+				
+		case (parm$="Stars"):
+		{
+			if (value$="-1") Stars_fb = 0; else Stars_fb=atoi(value$)+1;
+		}
+					
+		case (parm$="ThumbsDown"):            
+		{
+			if (value$<>"-1")
+		    {              
+	    		giThumbsDown = atoi(value$);
+	    		ThumbsDown_Enabled_fb=(giThumbsDown+1)+(3*(gsNowPlayingSource="LastFM") + (6*(gsNowPlayingSource="Rhapsody")));       
+	    	}
+		    else
+		    {
+				giThumbsDown=-1;
+				ThumbsDown_Enabled_fb=0;
+		    }
+		}
+
+		case (parm$="ThumbsUp"):            
+		{
+			if (value$<>"-1")
+		    {              
+	    		giThumbsUp = atoi(value$);
+	    		ThumbsUp_Enabled_fb=(giThumbsUp+1)+(3*(gsNowPlayingSource="LastFM") + (6*(gsNowPlayingSource="Rhapsody")));                  
+	    	}
+		    else
+		    {
+				giThumbsUp=-1;
+				ThumbsUp_Enabled_fb=0;
+		    }
+		}
+
+		case (parm$="TotalTracks"): 
+		{	
+			giTotalTracks=atoi(value$);
+			if (gbJump=on)
+			{	
+				cmd$ = "JumpToNowPlayingItem " + itoa(giTotalTracks);
+				doCommand(cmd$);
+				doCommand("Mute False");
+				gbJump=off;
+			}
+		}  
+
+		case (parm$="TrackDuration"): SetTrackLen(value$);
+
+		case (parm$="TrackTime"): SetTrackTime(value$);
+
+		case (parm$="TrackNumber"): 
+		{
+				
+			if (atoi(Value$) > 0) 
+			{
+				Playing_Track_Number=Value$;
+			}
+			else
+			{
+				Playing_Track_Number = "";
+			}			
+		}
+
+		case (parm$="Volume"): Volume_fb = atoi(value$);     
+		
+		case (parm$ = "UI"):
+		{
+		    type = remove(" ",value$,1);
+
+		    if (type = "Clear ")
+			{
+			    clearDialogs();
+			}
+	
+			else if (type = "InputBox ")
+			{
+			    getKBInputUI(value$);
+			}
+			
+			else if (type = "MessageBox ")
+			{
+			    showMessageBox(value$);
+			}
+			
+			else if (type = "Navigate ")
+			{
+				clearDialogs();
+			    pageFlip(PAGE_NOWPLAYING);
+			}
+			
+			else if (type = "StatusMessage ")
+			{
+			    MessageCaption$ = gsFiltersDesc;
+			    MessageText$ = mid(value$,2,len(value$)-2);
+			    Dialog_Buttons = 0;
+			    Dialog_Enabled_fb = on;
+			    
+                wait(500)
+                {
+                	clearDialogs();
+                }
+			}
+		}
+	}
+}                    
+
+
+function setFilterDescription(string datum)
+{
+	integer pos;
+	pos=find("Ok", datum);
+	gsFiltersDesc=mid(datum,pos+4,len(datum)-(pos+4));
+}
+
+
+function ParseToken(String In$)
+{
+	integer i;
+	
+	//Strip the carrage return if it exists
+	if (find("\n",In$)>0)	In$ = left(In$, find("\n",In$)-1);
+	
+	IF (debug=on) Print ("  %s\n",In$);
+						
+	switch (1)
+	{
+		case (left(In$,12) = "TestEncoding"):
+		{	Caption = In$;
+			Delay(100);
+		}
+			
+		case (left(In$,2)="  "):
+		{
+			If (gbFetchingList=on) ProcessListItem(In$);	//List Item.
+		}
+			
+		case (left(In$,5)="Begin"):						//List Token.
+		{
+			ProcessNewList(In$);
+		}
+		
+		case (left(In$,3)="End"):						//End List 
+		{	
+			giMoreItems = (find(" More",In$) > 0);
+			ProcessListEnd();
+		}                   
+		
+		case (left(In$,13)="MovieProperty"):
+		{
+			processMovieProperty(In$);
+		}
+			
+		case (left(In$,4)="Push" && find("Filter",In$)>0):
+		{
+			setFilterDescription(In$);
+		}
+				
+		case (find("StateChanged ",In$)>0 | find("ReportState ",In$)>0) :
+		{
+			ParseStateChange(In$);
+		}
+	}
+}
+function setFilterContext()
+{
+	gsFiltercontext[1] = "Music";
+	gsFiltercontext[2] = "Movie";
+	gsFiltercontext[3] = "Dvr";
+	gsFiltercontext[4] = "Video";
+	gsFiltercontext[5] = "Picture";
+	gsFiltercontext[6] = "Radio";
+}
+
+function setFilter(integer context, string filter, integer append)
+{
+   string cmd$[256];
+   
+   if (!append)
+    {	cmd$ =  "Set" + gsFilterContext[context] + "Filter Clear";
+    	doCommand(cmd$);
+		gsFilters="";
+		gsFiltersDesc="";
+    }
+    
+    if (filter <> "") 
+	{	cmd$ = "Push" + gsFilterContext[context] + "Filter " +  filter;
+		doCommand (cmd$);
+		gsFilters = gsFilters + filter + " ";       
+		if (debug = On) Print("Filters are: %s\n",gsFilters);
+	}
+}                 
+
+function setMediaMode(integer iMode)
+{
+    
+	setfilter (iMode,"",0);
+	giBrowsingMedia=iMode;
+	if (debug=on) print("Browse Context=%s", gsFiltercontext[giBrowsingMedia]);
+	
+	//Text
+	switch (iMode)
+    {
+		case (MEDIA_MUSIC):		 {Caption = "Music"; gsFiltersDesc="Music";}
+		case (MEDIA_MOVIES):	 {Caption = "Movies";gsFiltersDesc="Movies";}
+		case (MEDIA_RECORDEDTV): {Caption = "Recorded TV";gsFiltersDesc="Recorded TV";}
+		case (MEDIA_PICTURES):	 {Caption = "Pictures";gsFiltersDesc="Pictures";}
+		case (MEDIA_VIDEOS):	 {Caption = "Videos";gsFiltersDesc="Videos";}
+		case (MEDIA_TV):		 {Caption = "Live TV";gsFiltersDesc="Live TV";}    
+		case (MEDIA_RADIO):		 {Caption = "Radio";gsFiltersDesc="Radio";}
+	}
+	
+}
+
+function ApplyFilters(string refFilters$)
+{
+	string filters$[1024];
+	string filter$[256];
+	
+	string cmd$[256];
+	
+	cmd$ = "Set" + gsFilterContext[giBrowsingMedia] + "Filter Clear";  
+	doCommand(cmd$);
+	
+	gsFilters="";
+	filters$ = refFilters$;
+	
+	if (debug = On) Print("Applying Filters : %s\n",filters$);
+	
+	do
+	{
+		
+		filter$ = GetField(filters$);
+		if (filter$ <> "")
+		{	
+			cmd$ = "Push" + gsFilterContext[giBrowsingMedia] + "Filter " + filter$;
+			doCommand(cmd$);
+		}       
+		
+	} until (filter$ = "");
+}
+
+function AddToHistory(string cmd$, string filters$)
+{
+	integer i;   
+	string cmd1$[20];
+	string cmd2$[20];
+	
+	if (giServerHandlesBack = 0)
+	{
+		cmd1$ = cmd$;
+		cmd2$ = history[0].command;
+		
+		cmd1$ = left(cmd1$,find(" ",cmd1$));
+		cmd2$ = left(cmd2$,find(" ",cmd2$));
+		
+		if (cmd1$ = cmd2$)
+		{
+			history[0].command = cmd$;     
+			history[0].filters = filters$;
+		}
+		else
+		{
+				
+			for (i=5 to 1 Step -1) 
+			{	
+				history[i].command = history[i-1].command;
+				history[i].filters = history[i-1].filters;    
+				history[i].context = history[i-1].context;
+				history[i].page = history[i-1].page;
+				history[i].description = history[i-1].description;
+			}                                            
+			
+			history[0].command=cmd$;
+			history[0].filters=filters$;                  
+			history[0].context=giBrowsingMedia;
+			history[0].page=giCurrentPage;                        
+			history[0].description = gsFiltersDesc;
+		}                      
+		
+		Back_Enable = (history[1].command<>"");		 
+		
+		showHistory();
+	}                                                                                       
+}	
+
+function RecallHistory()
+{
+	integer i, d;
+	integer t1, t2;
+	string listStart$[64];
+		
+	if (giServerHandlesBack = 1)
+	{
+       trace ("server handles back");
+
+		clearList();
+		if (giCurrentPage = PAGE_NOWPLAYING){
+			trace("sending back 0");
+			doCommand("Back 0");
+		}
+		else
+		{
+			trace("sending back 1");
+			doCommand("Back 1");
+		}
+	}
+	else
+	{
+		
+		if (giCurrentPage = PAGE_HOME || giCurrentPage = PAGE_NOWPLAYING) d=0; else d=1;
+		
+		if (history[d].command<>"") 
+		{
+	
+			clearList();
+			
+			//update the list starting position.
+			if (find("Browse",history[1].command)>0) 
+			{
+				t1 = find(" ", history[d].command); 
+				t2 = find(" ", history[d].command, t1+1);
+				if (t1>0 && t2>0) 
+				{
+					giListStartPos = atoi(mid(history[d].command,t1+1,t2-t1-1));
+				}
+			}
+			
+			giBrowsingMedia=history[d].context;
+			applyFilters (history[d].filters);
+			gsFiltersDesc = history[d].description;
+			pageFlip(history[d].page);
+			doCommand (history[d].command); 
+		}
+		
+		if (d=1)
+		{
+			for (i=0 to 4)
+			{	
+				history[i].command = history[i+1].command;
+				history[i].filters = history[i+1].filters;    
+				history[i].description = history[i+1].description;
+				history[i].context = history[i+1].context;
+				history[i].page = history[i+1].page; 
+			}
+			
+			history[5].command = "";
+			history[5].filters = "";
+			history[5].description = "";
+			history[5].context = 0;
+			history[5].page = 0;
+		}
+		
+		Back_Enable=(history[1].command<>"");   
+		showHistory();
+	}
+}
+
+function BrowseList(string sList, integer start, integer count, integer history)
+{
+	string cmd$[64];
+
+	giPagingValue = count;	
+	if (start <1) start=1;
+	giListStartPos=start;
+	
+	//Caption = "Working...";
+	List_Position = "";
+	
+	clearList();
+	
+	cmd$="Browse" + sList + " " + itoa(start) + " " +  itoa (count);
+	DoCommand (cmd$);
+	
+	if (debug = On) print("Start = %u\x0D",start);
+	
+	Prev_Enable = (start>1);
+	Scroll_Enable = (Next_Enable || Prev_Enable);
+	AddToHistory(cmd$, gsFilters);
+} 
+      
+
+function browseFilters(String Media$)
+{
+    List_Position = "";
+    clearList();
+	gisearch = off;
+
+	switch(1)
+	{
+		case (Media$="Music"):
+		{	parseToken ("BeginMusicFilters Total=6");
+			parseToken ("  MusicFilter 0 Albums");
+			parseToken ("  MusicFilter 0 Artists");
+			parseToken ("  MusicFilter 0 Genres");
+			parseToken ("  MusicFilter 0 Playlists");
+			parseToken ("  MusicFilter 0 Radio");
+			parseToken ("  MusicFilter 0 Titles");
+			parseToken ("EndMusicFilters NoMore");
+			setMediaMode (MEDIA_MUSIC);
+		}
+	
+		case (Media$="Movies"):
+		{	parseToken ("BeginMovieFilters Total=5");
+			parseToken ("  MovieFilter 0 Titles");
+			parseToken ("  MovieFilter 0 Genres");
+			parseToken ("  MovieFilter 0 People");
+			parseToken ("  MovieFilter 0 Ratings");
+			parseToken ("  MovieFilter 0 Years");
+			parseToken ("EndMovieFilters NoMore");
+			setMediaMode (MEDIA_MOVIES);
+		}
+		
+		case (Media$="RecordedTV"):
+		{   parseToken ("BeginDVRFilters Total=5");
+			parseToken ("  DVRFilter 0 Titles");
+			parseToken ("  DVRFilter 0 Genres");
+			parseToken ("  DVRFilter 0 Ratings");
+			parseToken ("  DVRFilter 0 Recorded Date");
+			parseToken ("  DVRFilter 0 Stations");
+			parseToken ("EndDVRFilters NoMore");
+			setMediaMode (MEDIA_RECORDEDTV);
+		}
+	
+		case (Media$="Pictures"):	
+		{
+			setMediaMode (MEDIA_PICTURES);
+			BrowseList ("Pictures",1,giMaxListItems,on);
+		}
+		
+		case (Media$="Videos"):		
+		{
+			setMediaMode (MEDIA_VIDEOS);
+			BrowseList ("Videos",1,giMaxListItems,on);
+		}
+	}
+}
+
+function PlayItem(string type, string item, integer jumpTo)
+{
+	string cmd$[512];
+	integer iOldTrackCount;
+			
+	iOldTrackCount = giTotalTracks;
+	
+	//translations
+	switch(1)
+	{
+		case (type = "PictureFolder" || type = "PictureFile"): type="SlideShow";
+		case (type = "VideoFolder" || type = "VideoFile"): type="Video";
+	}
+	
+				
+	cmd$ = "Play" + type + " " + item;
+
+	If (jumpTo = On && iOldTrackCount > 0 && giBrowsingMedia = MEDIA_MUSIC && Current_Media_Type = MEDIA_MUSIC) 
+	{	
+		cmd$ = cmd$ + " True";
+	
+		gbJump = On;
+
+		if (Current_Play_State = PLAYSTATE_PLAY) doCommand ("Mute True");
+
+	}
+	else
+	{
+		gbJump = off;
+	}
+	
+	doCommand (cmd$);
+} 
+
+function RemoveItem(string sGUID)
+{
+	string cmd$[256];
+	cmd$ = "RemoveNowPlayingItem " + sGUID;
+	DoCommand (cmd$);
+	BrowseList(gsBrowse,giListStartPos,giMaxListItems,Off);
+}
+
+function RemoveItemByIndex(integer index)
+{
+	string cmd$[128];
+	integer position;
+	position = giListStartPos + index - 1;
+	cmd$ = "RemoveNowPlayingItem " + itoa(position);
+	doCommand(cmd$);
+	BrowseList(gsBrowse,giListStartPos,giMaxListItems,Off);
+}
+
+function RemoveFavorite(string sGUID)
+{
+	string cmd$[256];
+	cmd$ = "DeleteFavorite " + sGUID;
+	doCommand (cmd$);
+	BrowseList (gsBrowse, giListStartPos,giMaxListItems,off);
+}
+
+
+function JumpToItem(string sGUID)
+{
+	string cmd$[256];
+	cmd$ = "JumpToNowPlayingItem " + sGUID;
+	DoCommand (cmd$);
+}
+
+function JumpToItemByIndex(integer index)
+{
+	string cmd$[128];
+	integer position;
+	position = giListStartPos + index - 1;
+	cmd$ = "JumpToNowPlayingItem " + itoa(position);
+	doCommand(cmd$);
+}
+                          
+//Display IP Status
+function DoStatusLine (string status$)
+{
+  IP_Status = status$;
+}
+
+function onConnect()
+{
+	string cmd$[256];
+                        
+	
+	gbIP_IsRunning = ON;
+	DoStatusLine ("Media Server Connected");
+	clearAll();
+	
+	
+	//Set the defualt instance, if present.
+	if (gbDefaultInstanceSet = off)
+	{
+		if (Instance$ <> "*")
+		{
+			cmd$ = "SetInstance " + chr(34) + Instance$ + chr(34);
+			DoCommand(cmd$);
+		}
+		gbDefaultInstanceSet = on;
+	}
+	
+	If (Events_Enabled) DoCommand("SubscribeEvents True");
+
+	doCommand("SetClientType Crestron");
+	doCommand("SetClientVersion 3.2.5");
+	doCommand("SetEncoding 20105");  
+	docommand("StartMCE"); 
+	cmd$ = "SetPicklistCount " + itoa(giMaxListItems);
+	doCommand(cmd$);
+	doCommand("SetOption supports_playnow=true");
+	doCommand("GetStatus");
+}
+
+Function BrowseAlpha (string media$, string alpha$)
+{
+	
+	integer start;
+	string cmd$[256];
+
+	cmd$ = "Browse" + media$ + " " + chr(34) + alpha$ + chr(34) + " " + itoa(giMaxListItems);
+	
+
+	doCommand(cmd$);
+
+	AddToHistory(cmd$, gsFilters);
+	
+
+	Prev_Enable = (start>1);
+	Scroll_Enable = (Next_Enable || Prev_Enable);
+
+
+}
+                
+function pageadv (integer direction)
+{
+
+	integer start, count;
+	
+	switch (direction)
+	{
+		case(NEXT && Next_Enable <> 0):
+		{
+			
+			start = giListStartPos + giPagingValue;
+			if (start > giListCount) start = giListCount;
+			count = giPagingValue;
+			BrowseList (gsBrowse, start, count, On);
+						
+		}
+
+		case(PREV && Prev_Enable <> 0):
+		{
+   			
+			start = giListStartPos-giPagingValue;
+			if (start < 1) start = 1;
+			count = giPagingValue;
+			BrowseList (gsBrowse, start, count, On);
+						
+               
+		}
+	}
+}
+
+function select_title(integer listindex)
+{
+
+	string sBrowseList[48];
+	string cmd[256];
+	
+     
+ 	gsListType=gsType[listindex];
+
+	if (Title_Enabled[listindex]<>0)
+	{
+		if (gsListActions[listindex]<>"")
+		{
+			cmd = gsListActions[listindex] + " " + gsGUID[listindex];
+			clearList();
+			doCommand(cmd);
+		}
+		else
+		{
+		
+			switch(1)
+			{
+				case (gsListType = "Instance"):
+				{
+					gsParentType = "";
+					IP_Status = "Connecting to " + gsItem[listIndex];
+					cmd = "SetInstance " + chr(34) + gsItem[listIndex] + chr(34);
+					doCommand(cmd);
+					onConnect();
+				}
+			
+				
+				case (gsListType = "InstanceInfoEx"):
+				{		
+					gsParentType = "";
+					IP_Status = "Connected to " + gsItem[listIndex];
+					if (gsServer[listIndex]="127.0.0.1") { // local host
+						cmd = "SetInstance " + gsInstance[listIndex];
+						doCommand(cmd);
+						onConnect();
+					} else {
+						//Crestron module only supports connections to local host instances and extenders.
+						//Extended connections TBD
+					}
+				}
+				
+				case (gsListType = "MusicFilter"):
+				{
+					gsParentType = "";
+					gsFiltersDesc = gsItem[listindex];
+					
+					if (gsItem[listIndex]="Playlists")
+					{
+						setFilter(MEDIA_MUSIC,"",off);
+						BrowseList (gsItem[listindex], 1, giMaxListItems, On);
+					}
+					else if (gsItem[listIndex]="Radio")
+					{
+						if (debug=on) Print("Radio Selected");
+						setMediaMode(MEDIA_RADIO);
+						setFilter(MEDIA_RADIO,"",off);
+						BrowseList ("RadioSources", 1, giMaxThumbnails, On);
+					}
+					else
+					{
+						setFilter(MEDIA_MUSIC,"",off);
+						BrowseList (gsItem[listindex], 1, giMaxThumbnails, On);
+					}
+
+					//Back_Enable = 1;
+				}
+				
+				case (gsListtype = "MovieFilter"):
+				{
+					gsParentType = "";
+					setFilter(MEDIA_MOVIES,"",off);
+					gsFiltersDesc = gsItem[listindex];
+					if (gsItem[listIndex]="Titles")
+					{
+						BrowseList ("MovieTitles", 1, giMaxThumbnails, On);
+					}
+					else
+					{
+						sBrowseList = "Movie" + gsItem[listIndex];
+						browseList (sBrowseList, 1, giMaxListItems, On);
+					}
+				}
+				
+				case (gsListType = "DVRFilter"):
+				{
+					gsParentType = "";
+					setFilter(MEDIA_RECORDEDTV,"",off);
+					gsFiltersDesc = gsItem[listindex];
+					sBrowseList = "DVR" + gsItem[listIndex];
+					if (sBrowseList = "DVRRecorded") sBrowseList="DVRRecordDates";
+					if (sBrowseList = "DVRTitles")
+					{
+						//pageFlip(PAGE_THUMBNAILS);
+						browseList ("DVRTitles", 1, giMaxThumbnails, On);
+					}
+					else
+					{
+						//pageFlip(PAGE_LIST);
+						browseList (sBrowseList, 1, giMaxListItems, On);
+					}
+				}
+				
+				case (gsListType = "PictureFolder"): 
+				{
+					gsParentType = "";
+					gsFiltersDesc = "Pictures";
+					cmd = "PictureFolder=" + gsGuid[listIndex];
+					setFilter (MEDIA_PICTURES,cmd,off);
+					browseList("Pictures", 1,  giMaxThumbnails,on);
+				}
+			
+				case (gsListType = "PictureFile"):
+				{
+					gsParentType = "";
+					playItem("SlideShow", gsGuid[listIndex], off);
+				}
+							
+				case (gsListType = "VideoFolder"):
+				{	
+					gsParentType = "";
+					gsFiltersDesc = "Videos";
+					cmd = "VideoFolder=" + gsGuid[listIndex];
+					setFilter (MEDIA_VIDEOS,cmd,off);
+					browseList("Videos", 1, giMaxThumbnails,on);
+				}
+				
+				case (gsListType = "VideoFile"):
+				{
+					gsParentType = "";
+					playItem("Video",gsGuid[listIndex],off);
+				}
+				
+				//MUSIC
+				case (gsListtype = "Genre"):
+				{	
+					gsParentType = "Genre " + gsGuid[listIndex] + " false";
+					gsFiltersDesc = "";
+					cmd = "Genre=" + gsGUID[listindex]; 
+					setFilter (MEDIA_MUSIC,cmd,off);
+					browseList ("Albums", 1, giMaxThumbnails, On);
+				}
+				
+				case (gsListType = "Artist"):
+				{	
+					gsParentType = "Artist " + gsGuid[listIndex] + " false";
+					gsFiltersDesc = "";
+					cmd = "Artist=" + gsGUID[listindex];
+					setFilter(MEDIA_MUSIC,cmd,off);
+					browseList ("Albums", 1, giMaxThumbnails, On);
+				}
+				
+				case (gsListType = "Album"):
+				{	
+					gsParentType = "Album " + gsGuid[listIndex] + " false";
+					gsFiltersDesc = gsItem[listindex];
+					clearInfo();
+					gsGuid[0]=gsGUID[listindex];
+					cmd = "Album=" + gsGUID[listindex]; 
+					setFilter(MEDIA_MUSIC,cmd,off);
+					Browse_Art_Format = 1;  
+					Refresh_Browsing_Art(gsGUID[listindex]);
+					pageFlip(PAGE_DETAILS);
+					BrowseList ("Titles", 1, giMaxListItems, off);
+				}
+				
+				case (gsListType = "Playlist"):
+				{	
+					gsParentType = "Playlist " + gsGuid[listIndex] + " false";
+					gsFiltersDesc = "";
+					cmd = "Playlist=" + gsGUID[listindex];
+					setFilter (MEDIA_MUSIC,cmd,off);
+					pageFlip(PAGE_LIST);
+					browseList ("Titles", 1, giMaxListItems, On);
+				}
+				
+				case (gsListType = "Title"):
+				{	
+					
+					if (giButtonState = BUTTON_STATE_DELETE)
+					{
+						cmd = "JumpToNowPlayingItem " + gsGUID[listindex];
+						DoCommand(cmd);
+					}
+					else
+					{
+						if (gsParentType = "" || gsItem[listIndex] = "Shuffle all")
+						{
+							cmd = gsGUID[listindex] + " false";			
+							PlayItem ("Title", cmd, off);
+						}
+						else
+						{
+							PlayItem (gsParentType, gsGUID[listIndex], off);
+						}
+					}
+				}
+				
+				
+				case (gsListType = "Favorite"):
+				{
+	                      
+					gsParentType = "";
+					cmd = "PlayFavorite " + gsGUID[listindex];
+					docommand (cmd);
+	
+				}
+	
+				
+				case (gsListType = "RadioSource"):
+				{
+					gsParentType = "";
+					cmd = "RadioSource=" + gsGUID[listIndex];
+					setFilter(MEDIA_RADIO,cmd,off);
+					
+					if (gsGUID[listIndex] = "fbbcedb1-af64-4c3f-bfe5-000000000008")
+					{
+                    	browseList("RadioGenres", 1, giMaxThumbnails, On);
+					}
+					else
+					{
+						browseList("RadioStations", 1, giMaxThumbnails, On);
+					}
+				}
+					
+				case (gsListType = "RadioGenre"):
+				{
+					gsParentType = "";
+					cmd = "RadioGenre=" + gsGUID[listIndex];
+					setFilter(MEDIA_RADIO,cmd,On);
+					browseList("RadioStations", 1, giMaxThumbnails, On);
+				}
+				
+				case (gsListType = "RadioStation"):
+				{
+					gsParentType = "";
+					PlayItem ("RadioStation", gsGUID[listindex], off);
+				}
+				
+				//MOVIES
+				case (left(gsListType,5)="Movie"):
+				{	
+					gsParentType = "";
+					clearInfo();
+					gsGuid[0]=gsGUID[listindex];
+					cmd = gsListType + "=" + gsGuid[listIndex];
+					if (gsListType = "MovieTitle")
+					{	
+						setFilter(MEDIA_MOVIES,cmd,off);
+						Browse_Art_Format = 3;
+						Refresh_Browsing_Art(gsGuid[listIndex]);  
+						giCurrentPage = PAGE_DETAILS; 
+	
+	
+						//pageFlip(PAGE_DETAILS);
+						browseList ("MovieChapters", 1, giMaxListItems, off);   
+						cmd="GetMovieProperties " + gsGuid[listIndex];
+						doCommand(cmd);
+					}
+					else if (gsListType = "MovieChapter")
+					{
+						PlayItem ("MovieChapter", gsGUID[listindex], off);
+					}
+					else
+					{	
+						gsFiltersDesc = "Movies";
+						setFilter(MEDIA_MOVIES,cmd,off);
+						browseList ("MovieTitles", 1, giMaxThumbnails, On);			
+					}
+				}
+		
+				//DVR
+				case (left(gsListType,3)="Dvr"):
+				{	
+					gsParentType = "";
+					if (gsListtype = "DvrTitle") 
+					{
+						PlayItem ("DvrTitle", gsGuid[listIndex], off);
+					}
+					else
+					{	
+						gsFiltersDesc = "Recorded TV";
+						cmd=gsListType + "=" + gsGuid[listIndex];
+						setFilter(MEDIA_RECORDEDTV,cmd,off);
+						browseList ("DVRTitles", 1, giMaxThumbnails, On);
+					}
+				}
+				
+				//TV
+				case (gsListType = "EpgGenre"):
+				{	
+					gsParentType = "";
+					setMediaMode(MEDIA_TV);
+					cmd = "Genre=" + gsGuid[listIndex];
+					setFilter(MEDIA_TV,cmd,off);
+					browseList ("EpgStations", 1, giMaxListItems, on);
+				}
+				
+				case (gsListType = "EpgStation"):
+				{
+					gsParentType = "";
+					setMediaMode(MEDIA_TV);
+					PlayItem ("EPGStation", gsGuid[listIndex], off);
+				}        
+				
+				case (gsListType = "PickListItem"):
+				{
+			    	gsParentType = "";
+					cmd = "AckPickItem " + gsGuid[listIndex];
+					clearList();
+			    	doCommand(cmd);
+				}
+			}
+		}
+	}
+}	
+
+function PlayNow_Title(integer i)
+{
+
+	if (Title_Enabled[i]<>0) 
+	{
+		if (giButtonState = BUTTON_STATE_DELETE)
+		{
+			//JumpToItem(gsGUID[i]);
+			JumpToItemByIndex(i);
+		}
+		else
+		{
+			PlayItem (gsType[i], gsGUID[i], On);
+			Caption = "Now Playing " + gsItem[i];
+		}
+	}
+}
+
+function AddToPlaylist_Title(integer i)
+{
+
+	string cmd[128];
+
+	if (Title_Enabled[i]<>0) 
+	{	
+		if (gsActions[i]<>"")
+		{
+			cmd = gsActions[i] + " " + gsGUID[i];
+			doCommand(cmd);
+		}
+		else if (gsBrowse = "Favorites")
+		{	
+			RemoveFavorite (gsGUID[I]);
+		}
+
+		else if (giButtonState = BUTTON_STATE_DELETE)
+		{
+			//RemoveItem (gsGUID[I]);
+			RemoveItemByIndex(i);
+		}
+		
+		else
+		{
+			PlayItem (gsType[i], gsGUID[i], Off);           
+			cmd = gsItem[i] + " added to the queue.";
+			showInstantMessageBox ("Queue",cmd);
+		}
+	}
+
+}
+                           
+
+function fNextPage()
+{
+	integer start, count;
+	
+	if (Next_Enable<>0)
+	{
+		start = giListStartPos + giPagingValue;
+		if (start > giListCount) start = giListCount;
+		count = giPagingValue;
+		BrowseList (gsBrowse, start, count, On);
+	}
+}
+
+function fPrevPage()
+{
+	integer start, count;
+	
+	if (Prev_Enable<>0)
+	{
+		start = giListStartPos-giPagingValue;
+		if (start < 1) start = 1;
+		count = giPagingValue;
+		BrowseList (gsBrowse, start, count, On);
+	}
+}	
+
+function PlaylistSave(string plistName$)
+{
+
+	string cmd$[256];
+
+	cmd$ = "SavePlaylist " + chr(34) + plistName$ + chr(34);
+
+	doCommand(cmd$);
+
+}
+
+
+
+Integer_Function seekCalc(integer seekDir)
+
+{
+	integer targSec;
+
+	if (seekDir = 0){
+		
+		if (giTrackTime - Seek_Delta < 0){
+			targSec = 0;
+		} else {
+			targSec = giTrackTime - Seek_Delta;
+		}
+		//targSec = 0;
+
+
+	} else if (seekDir = 1){
+        
+		if (giTrackTime + Seek_Delta > giTrackLen){
+			targSec = giTrackLen;
+		} else {
+			targSec = giTrackTime + Seek_Delta;
+		}
+		//targSec = 0;
+
+	}
+	//print("targSec is: %d", targSec);
+    Return (targSec);
+}
+
+function preventOverflow()
+{
+	trace("Preventing buffer overflow");
+   	ClearBuffer(IP_RX$);
+	ClearBuffer(giBufferIn$);
+	doCommand("GetStatus");
+}
+                 
+
+
+/*******************************************************************************************
+  Event Handlers
+*******************************************************************************************/
+
+
+PUSH ContextButton1
+{
+
+	if (gsContext1$ = "Now Playing")
+		pageflip(PAGE_NOWPLAYING);
+	else
+		if (gsContext1$ = "Actions")
+		{
+			clearlist();
+			docommand("AckButton CONTEXT");
+		}
+}
+
+PUSH ContextButton2
+{
+
+	if (gsContext2$ = "Zones")
+	{
+		clearlist();
+		docommand("BrowseInstances");
+	}
+	else if (gsContext2$ = "Actions")
+	{
+		clearlist();
+		docommand("AckButton CONTEXT");
+	}
+	else
+	{
+		if(gsContext2$ = "Save Playlist")
+		{
+			
+			MessageCaption$ = "Save Playlist";
+			MessageText$ = "Enter a name to save the current queue as a playlist.";
+			MessageValue$ = "";
+		
+			pulse(10,Page_KB_fb);
+			giSavePlaylist = On;
+
+        }
+	}
+}
+
+PUSH ContextButton3
+{
+
+	string cmd$[48];
+	
+	if (gsContext3$ = "Clear Queue")
+	{
+		docommand("ClearNowPLaying");
+
+		if (giUICapabilities = 0)       
+		{
+			browsefilters("Music");
+		}
+		else
+		{
+			setFilter(MEDIA_MUSIC,"",off);
+			BrowseList ("Albums", 1, giMaxThumbnails, On);
+		}			
+
+	}
+	else if (gsContext3$ = "Search")
+	{
+		MessageCaption$ = "Search";
+		MessageText$ = "Enter text to search the current listing.";
+		MessageValue$ = "";
+
+		pulse(10, Page_KB_fb);
+
+		giSearchActive = On;
+	}                
+	else if (gsContext3$ = "Favorites")
+	{  
+		browseList ("Favorites", 1, giMaxListItems, on);
+	}
+		
+		
+}
+
+PUSH ContextButton4
+{
+
+	if (gsContext4$ = "Controls")
+		pageflip(PAGE_HOME);
+
+}
+
+
+
+// Seek control
+
+PUSH Seek_Forward
+{
+    if (Seek_Back <> 1 && giSeekAvailable=on){
+
+		while(Seek_Forward = 1){
+			seekBuilder = "Seek " + itoa(seekCalc(1));
+			DoCommand(seekBuilder);
+			Delay(50);
+			//Seek$ = "Current Time: " + Current_Track_Time_In_Seconds;
+			//Seek$ = "Seek Delta: " + itoa(Seek_Delta);
+		}
+	}
+}
+
+
+PUSH Seek_Back
+{
+    if (Seek_Forward <> 1 && giSeekAvailable=on){
+
+		while(Seek_Back = 1){
+			seekBuilder = "Seek " + itoa(seekCalc(0));
+			DoCommand(seekBuilder);
+			Delay(50);
+			//Seek$ = "Current Time: " + Current_Track_Time_In_Seconds;
+			//Seek$ = "Seek Delta: " + itoa(Seek_Delta);
+		}
+	}
+}
+			
+		
+
+// Discrete Context Button Commands
+		
+push Actions
+{
+	clearlist();
+	doCommand("AckButton CONTEXT");
+}     
+
+push zones
+{
+	clearlist();
+	doCommand("BrowseInstances");
+}
+
+Push SavePlaylist
+{
+	               
+	MessageCaption$ = "Save Playlist";
+	MessageText$ = "Enter a name to save the current queue as a playlist.";
+	MessageValue$ = "";
+
+		
+	pulse(10,Page_KB_fb);
+
+	giSavePlaylist = On;
+}
+
+Push ClearQueue
+{
+ 	string cmd$[64];
+ 	
+ 	docommand("ClearNowPLaying");
+
+	if (giUICapabilities = 0)
+	{
+		browsefilters("Music");
+	}
+	else
+	{
+		cmd$ ="BrowseAlbums 1 " + itoa(giMaxListItems);
+		doCommand(cmd$);
+	}
+}	
+
+push Search
+{
+	MessageCaption$ = "Search";
+	MessageText$ = "Enter text to search the current listing.";
+	MessageValue$ = "";
+
+	pulse(10, Page_KB_fb);
+
+	giSearchActive = On;
+}	
+
+//  Discrete Context Button Commands
+              
+
+
+push Go_Back
+{
+	if (giBackAvailable=1) RecallHistory(); else browseFilters("Music");
+}
+
+change Art_Error
+{
+	//Resends http request on error.
+	integer i;
+	string sURL[256];
+	i=getlastmodifiedarrayindex();
+	
+	if (Art_Error[i] <> 0)
+	{
+		sURL = getArtURL(gsGuid[i]);
+		if (debug = On) Print ("List Item %d, Error Code %d, Retrying %s\n",i,Art_Error[i],sURL);
+		ListArt$[i] = "";
+		delay(5);
+		ListArt$[i] = sURL;
+	}
+}
+
+change Command$
+{
+	string cmd$[256];
+	integer FirstChar;
+
+	cmd$ = Command$;
+	
+	processlogic();
+	
+	switch(1)
+	{
+
+		case (left(cmd$,7)="Browse "): 
+		{
+			browseFilters(mid(cmd$,8,15));
+		}
+		
+		case (left(cmd$,6)="Browse"):
+		{	
+			
+
+			//if (gsBrowse=mid(cmd$,7,10) || gsBrowse="Titles") DoCommand("SetMediaFilter Clear"); 
+			
+			//Added to clear filters for new browse commands. 2.3
+			DoCommand("SetRadioFilter Clear");
+			DoCommand("SetMediaFilter Clear"); 
+			
+			gsFiltersDesc = mid(cmd$,7,32);
+			if (gsFiltersDesc="RadioStations") gsFiltersDesc = "Radio Stations";
+			if (gsFiltersDesc="RadioSources")
+			{
+				gsFiltersDesc = "Radio Sources";
+				setMediaMode(MEDIA_RADIO);
+			}
+			else 
+			{
+				setMediaMode(MEDIA_MUSIC);
+			}
+            //trace("Browse type is %s",mid(cmd$,7,32));
+			if (mid(cmd$,7,32)="Titles") gsParentType = "";
+
+			BrowseList (mid(cmd$,7,32),1,giMaxListItems, On);
+		}
+		
+		case (cmd$="ClearNowPlaying"):
+		{	
+			if (gsBrowse="NowPlaying") clearAll();
+			Caption = "Play Queue Cleared.";
+			giTotalTracks=0;
+			DoCommand (cmd$);
+		}        
+
+		case (left(cmd$,3)="KB " ):
+		{
+			if (giKBUI = on)
+			{
+				giKBUI = off;
+				cmd$ = gsMsgActions[1] + " OK " + chr(34) + mid(cmd$,4,128) + chr(34);
+				doCommand(cmd$);
+			}
+			else
+			{
+				if(giSavePlaylist = On)
+				{
+					giSavePlaylist = Off;
+					PlaylistSave(mid(cmd$,4,128));
+				}
+				else
+                {
+					if (len(cmd$) = 4)  // KB <Char> should be length 3 and should trigger browse by alpha instead of search.
+					{
+						if (Alpha_Enabled_fb >= 1)
+						{
+							if (debug = On) print("Alpha Enabled \x0D");
+							BrowseAlpha(gsBrowse,mid(cmd$,4,1));
+						}
+					}
+				   	else
+					{
+                	   	if (giSearchActive = On)
+						{
+                			giSearchActive = Off;
+							cmd$ = "Search=" + chr(34) + "*" + mid(cmd$,4,128) + "*" + chr(34);
+							setFilter(giBrowsingMedia,cmd$,1);
+							BrowseList (gsBrowse, 1, giMaxListItems, On);
+						}
+					}
+				}
+			}
+		}
+		case (left(cmd$,8)="KBCANCEL"):	
+		{
+			giKBUI = off;
+			cmd$ = gsMsgActions[1] + " CANCEL";
+			doCommand(cmd$);
+		}
+        
+		default:
+		{	
+			DoCommand (cmd$); 
+		}
+
+	}
+}
+
+change Connect
+{
+	if (Connect = off){
+		gbDefaultInstanceSet = off;
+		ClearBuffer(IP_RX$);
+	}
+	To_IP_Connect = Connect;
+}
+
+push Dialog_Button
+{
+	doCommand(gsMsgActions[getLastModifiedArrayIndex()]);
+}
+
+change Direct_Volume
+{
+	string cmd$[12];
+	cmd$="SetVolume " + itoa(Direct_Volume);
+	doCommand(cmd$);       
+
+}
+
+change Events_Enabled
+{
+	if (Events_Enabled) DoCommand("SubscribeEvents True");
+		else DoCommand("SubscribeEvents False");
+}
+
+change IP_RX$
+{
+//	String In$[2048];
+
+	if (debug && superdebug) trace("RX buffer changed size %i", len(IP_RX$));
+	if (debug && superdebug) trace("RX buffer with content: %s", IP_RX$);
+	if (debug && superdebug) trace("giBufferActive %i", giBufferActive);
+	
+	if (giBufferActive=off)	{
+		giBufferActive=on;
+		if (debug && superdebug) trace("giBufferActive %i", giBufferActive);
+		do
+		{
+			giBufferIn$=gather("\n", IP_RX$);
+			ParseToken(giBufferIn$);
+			ClearBuffer(giBufferIn$);
+		} until (Find("\n",IP_RX$)=0);
+		if (len(IP_RX$) >= 16000){
+			trace("MMS IP_RX$ buffer full, preventing overflow, size %i", len(IP_RX$));
+			trace("MMS IP_RX$ buffer content: %s", IP_RX$);
+			preventOverflow();
+		}
+		giBufferActive=off;
+		if (debug && superdebug) trace("giBufferActive %i", giBufferActive);
+	}
+	if (debug && superdebug) trace("giBufferActive %i", giBufferActive);
+}
+                          
+change ListItemsCount
+{
+	If (ListItemsCount > 10) {giMaxListItems=10;} else {giMaxListItems=ListItemsCount;}
+}                   
+
+change Page_fb
+{
+	giCurrentPage = Page_fb;
+
+	getContextButtonStates();
+}
+	
+
+change ThumbnailsCount
+{
+	If (ThumbnailsCount > 10) {giMaxThumbnails=10;} else {giMaxThumbnails=ThumbnailsCount;}
+}
+
+change Service
+{
+
+	String cmd[128];
+	gsParentType = "";
+	cmd = "RadioSource=" + Service;
+	setFilter(MEDIA_RADIO,cmd,off);
+	
+	if (Service = "fbbcedb1-af64-4c3f-bfe5-000000000008") //Sirius XM
+	{
+        browseList("RadioGenres", 1, giMaxThumbnails, On);
+	}
+	else
+	{
+		browseList("RadioStations", 1, giMaxThumbnails, On);
+	}
+}
+
+change Scrollbar_Position
+{
+ 	integer iStart;
+ 	
+ 	if (Scroll_Enable<>0)
+ 	{
+	 	if (!giBusy)
+	 	{
+	 		giBusy=On;
+	 		if (giPagingValue = 0) giPagingValue = giMaxThumbnails;
+			if (giListCount > giPagingValue){
+				iStart = (65535-Scrollbar_Position) / (65535 / giListCount);
+			} else {
+				iStart = 1;
+			}
+		 	BrowseList (gsBrowse, iStart, giPagingValue, On);
+		}
+	}
+}
+
+push NextPage
+{
+
+	fNextPage();
+}
+
+push PrevPage
+{
+	fPrevPage();
+}		
+		
+push List_AddtoQueue
+{
+	PlayItem (gsListType, gsGuid[0], On);
+}
+
+push List_PlayNow
+{
+	PlayItem (gsListType, gsGuid[0], Off);
+}
+
+push ThumbsDown
+{
+	if (ThumbsUp_Enabled_fb>0) doCommand("ThumbsDown");
+}
+
+push ThumbsUp
+{
+	if (ThumbsDown_Enabled_fb>0) doCommand("ThumbsUp");
+}
+      
+push Home
+{
+
+	BrowseList(gsBrowse, 1, giPagingValue, on);
+
+}
+
+push End
+{
+	BrowseList(gsBrowse, giListCount - giPagingValue + 1, giPagingValue, on);
+}
+
+push Title_AddToPlayList
+{
+	integer i;  
+	i=getlastmodifiedarrayindex();
+	AddToPlayList_Title(i);
+}
+ 
+push Title_PlayNow
+{
+	integer i;
+	i=getlastmodifiedarrayindex();
+	PlayNow_Title(i);
+}
+
+/*******  Code replaced by context Buttons                    
+push SavePlaylist
+{
+	MessageCaption$ = "Save Playlist";
+	MessageText$ = "Enter a name to save the current queue as a playlist.";
+	MessageValue$ = "";
+
+}
+
+
+/******  Code replaced by context buttons
+push Search
+{
+
+	MessageCaption$ = "Search";
+	MessageText$ = "Enter text to search the current listing.";
+	MessageValue$ = "";
+
+}
+****/
+
+push Title_Select
+{
+	integer listindex;
+		
+	listindex = getlastmodifiedarrayindex();
+	
+	
+	select_title(listindex);
+
+}
+
+push setOSD
+{
+    /*     
+	STRING cmd$[100];
+	
+	cmd$ = "SetOSDInstance" + "\x20" + Instance$;
+	doCommand(cmd$);
+	*/
+	preventOverflow();
+
+}
+
+change From_IP_Client_Status
+{
+
+  STRING s$[64];
+  
+  
+
+  SWITCH (From_IP_Client_Status)
+  {
+    CASE (0): //Not connected
+    {
+      	Page_Message_fb = ON;
+	 	 To_IP_Connect = OFF;
+      	gbIP_IsRunning = OFF;
+    }
+
+    CASE (1): //Waiting for connection
+    {
+     	 Page_Message_fb = ON;
+		 DoStatusLine ("Waiting for TCP/IP connection");
+    }
+
+    CASE (2): //Connected
+    { 
+		if (debug = On) print("Switch 2:  TCP/IP Connected\n");
+		DoStatusLine ("Connected to Server");
+		if (debug = On) print("invoke onConnect function\n");
+		onConnect();
+	}
+
+    CASE (3): //Connection failed
+    {
+	  DoStatusLine ("TCP/IP connection failed");
+      To_IP_Connect = OFF;
+      gbIP_IsRunning = OFF;      
+    }  
+
+    CASE (4): //Connection broken remotely
+    { 
+      Page_Message_fb = ON;
+	  DoStatusLine ("TCP/IP connection broken remotely");
+	  To_IP_Connect = OFF;
+      gbIP_IsRunning = OFF;
+    }
+
+    CASE (5): //Connection broken locally
+    {
+      Page_Message_fb = ON;
+	  DoStatusLine ("TCP/IP connection broken locally");
+      To_IP_Connect = OFF;
+      gbIP_IsRunning = OFF;
+    }
+
+    CASE (6): //Performing DNS lookup
+    {
+      	Page_Message_fb = ON;
+		DoStatusLine ("Doing DNS lookup");
+    }
+
+    CASE (7): //DNS lookup failed
+    {
+      	Page_Message_fb = ON;
+		DoStatusLine ("DNS lookup failed - aborting");
+      	To_IP_Connect = OFF;
+      	gbIP_IsRunning = OFF;
+    }
+
+    DEFAULT:
+    {
+      	Page_Message_fb = ON;
+		s$ = "Unknown TCP/IP status: " + ITOA(From_IP_Client_Status);
+      	DoStatusLine (s$);
+     	To_IP_Connect = OFF;
+      	gbIP_IsRunning = OFF;
+    }
+  }
+}
+
+/*******************************************************************************************
+  Main()
+  Uncomment and place one-time startup code here
+*******************************************************************************************/
+
+function Main()
+{
+	
+	giButtonState = BUTTON_STATE_BROWSE;
+	giBufferActive = Off;
+	Back_Enable = Off;
+	giPagingValue = giMaxThumbnails;  
+	giCurrentPage = 99;
+	superdebug = off;
+
+	setFilterContext();
+	getContextButtonStates();
+	
+	WaitForInitializationComplete();
+		
+	Do
+	{	If (gbIP_IsRunning=Off && Connect=On) 
+		{
+			if (To_IP_Connect = On) 
+			{
+				To_IP_Connect = Off;
+				Delay(200);
+			}
+			To_IP_Connect=On;
+		}
+		Delay(2000);
+	} Until (Off);
+}

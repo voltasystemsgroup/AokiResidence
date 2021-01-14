@@ -1,0 +1,102 @@
+
+#DEFAULT_VOLATILE
+#ENABLE_STACK_CHECKING
+#ENABLE_TRACE
+
+ #HELP_BEGIN
+
+  The digital in are toggles, setting the digital outs accordingly
+  There is no feedback coming from the moxa
+
+    #HELP_END
+
+
+#DEFINE_CONSTANT TCPPORT 8080        
+
+DIGITAL_INPUT doChannel[10];
+DIGITAL_OUTPUT doChannel_f[10];
+
+STRING_PARAMETER ip_address[32];
+
+#BEGIN_PARAMETER_PROPERTIES ip_address 
+ propDefaultValue= "0.0.0.0";
+#END_PARAMETER_PROPERTIES
+
+TCP_CLIENT ClientTCP[2048];
+
+INTEGER PORT_STATUS;
+STRING tcpCommand[64];
+   
+SOCKETCONNECT ClientTCP 
+{
+   	SOCKETSEND(ClientTCP,tcpCommand);
+}
+
+SOCKETRECEIVE ClientTCP 
+{
+                                  
+		CLEARBUFFER(ClientTCP.SOCKETRXBUF);
+		SOCKETDISCONNECTCLIENT(ClientTCP);
+	
+}
+
+FUNCTION SENDCOMMAND()
+{
+	IF(PORT_STATUS = 0)
+	{
+		PORT_STATUS = 1;
+	
+		SOCKETCONNECTCLIENT(ClientTCP,ip_address,TCPPORT,0);
+	
+		SOCKETSEND(ClientTCP,tcpCommand);
+
+		WAIT(5000, CONNECTION_WAIT)
+		{
+		   SOCKETDISCONNECTCLIENT(ClientTCP);
+		}		
+	
+		PORT_STATUS = 0;
+	}
+	ELSE
+	{
+
+		RetimeWait(5000, CONNECTION_WAIT);
+
+		SOCKETSEND(ClientTCP,tcpCommand);
+		
+		PORT_STATUS = 0;
+		
+	}
+}
+                  
+PUSH doChannel
+{
+	integer i;
+	i = GetLastModifiedArrayIndex();
+
+	if(doChannel_f[i] = 1)
+	{
+		makestring(tcpCommand, "GET /setParam.cgi?DOPulseStart_%02d=0?", i-1);
+		trace("GET /setParam.cgi?DOPulseStart_%02d=0?", i-1);	
+		doChannel_f[i] = 0;
+	}
+	else
+	{
+		makestring(tcpCommand, "GET /setParam.cgi?DOPulseStart_%02d=1?", i-1);
+		trace("GET /setParam.cgi?DOPulseStart_%02d=1?", i-1);
+		doChannel_f[i] = 1;
+	}	
+	CALL SENDCOMMAND();
+}
+
+
+/*******************************************************************************************
+  Main()
+*******************************************************************************************/
+
+Function Main()
+{
+	WaitForInitializationComplete();
+	DELAY(500);
+	PORT_STATUS = 0;  
+}

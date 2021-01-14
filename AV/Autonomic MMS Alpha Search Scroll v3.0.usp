@@ -1,0 +1,188 @@
+/*******************************************************************************************
+  SIMPL+ Module Information
+  (Fill in comments below)
+*******************************************************************************************/
+/*
+Dealer Name: Autonomic Controls, Inc.	
+System Name: Mirage Media Control System
+System Number: 3.0
+Programmer: MJD
+Comments: 
+*/
+
+/*******************************************************************************************
+  Compiler Directives
+  (Uncomment and declare compiler directives as needed)
+*******************************************************************************************/
+#SYMBOL_NAME "Autonomic MMS Alpha Search Scroll v3.0"
+#DEFAULT_VOLATILE
+#ENABLE_TRACE
+                     
+
+DIGITAL_INPUT Scroll_Up, Scroll_Down;
+
+ANALOG_INPUT  Alpha_Scroll_Val;
+ANALOG_INPUT  Alpha_Scroll_Start;
+ANALOG_INPUT  wait_time;
+
+
+DIGITAL_OUTPUT   showAlpha;
+
+ANALOG_OUTPUT	Alpha_Scaled;
+
+STRING_OUTPUT   Alpha_Command$ , AlphaDisplay$;
+
+
+integer		giAlphaVal;
+integer		giScrolling;
+integer		giScrollbyClick;
+
+ 
+ 
+function sendKB(integer char)
+{
+
+	Alpha_Command$ = "KB " + chr(char);
+
+}
+
+       
+function scrollCheck()
+{
+
+	if (giScrolling = 0)
+	{
+        
+		ShowAlpha = 1;
+
+		
+		giScrolling = 1;
+		wait(wait_time, scroll)
+		{
+
+			showAlpha = 0;
+
+			giScrolling = 0;
+		
+			sendKB(giAlphaVal);
+            
+			delay(100);
+                    
+                                
+			processlogic();
+		}
+	
+	}else
+		{
+            
+			if(giScrollbyClick = On)
+ 				retimewait(wait_time + 100,scroll);
+			else
+				retimewait(wait_time,scroll);
+
+		}
+}
+
+PUSH Scroll_Up
+{
+    
+	giScrollbyClick = On;
+    
+	giAlphaVal = giAlphaVal - 1;
+
+	//print("giAlphaVal = %u\x0D",giAlphaVal);
+
+
+	if (giAlphaVal < 64) giAlphaVal = 64;
+
+
+	scrollCheck();
+
+		
+	AlphaDisplay$ = chr(giAlphaVal);
+	Alpha_Scaled = giAlphaVal;
+
+
+	
+}
+
+
+
+ 
+PUSH Scroll_Down
+{
+	
+
+	giScrollbyClick = On;
+        
+	giAlphaVal = giAlphaVal + 1;
+
+	//print("giAlphaVal = %u\x0D",giAlphaVal);
+
+
+	if (giAlphaVal > 90) giAlphaVal = 90;
+	
+	
+	scrollCheck();
+
+	
+	AlphaDisplay$ = chr(giAlphaVal);
+	Alpha_Scaled = giAlphaVal;
+
+
+
+}
+       
+
+CHANGE  Alpha_Scroll_Val
+{
+    
+	integer val;
+     
+
+	giScrollbyClick = off;
+
+	val = (65535 - Alpha_Scroll_Val) * 27 / 65535 + 64;
+	
+	giAlphaVal = val;
+
+	//print("giAlphaVal = %u\x0D",giAlphaVal);
+
+
+	
+	if (giAlphaVal < 64)
+		giAlphaVal = 64;
+
+	else if (giAlphaVal > 90)
+			 giAlphaVal = 90;
+
+	scrollcheck();
+
+	AlphaDisplay$ = chr(giAlphaVal);
+
+}
+
+CHANGE  Alpha_Scroll_Start
+{
+
+	giAlphaVal = Alpha_Scroll_Start;
+
+	if (giAlphaVal < 64)
+		giAlphaVal = 64;
+	else if (giAlphaVal > 90)
+			 giAlphaVal = 90;
+
+	//print("giAlphaVal = %u\x0D",giAlphaVal);
+
+
+}
+
+
+function main()
+{
+
+	giAlphaVal = 64;
+	
+	giScrolling = 0;
+
+}

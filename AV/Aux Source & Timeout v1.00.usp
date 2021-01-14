@@ -1,0 +1,68 @@
+
+
+
+
+DIGITAL_INPUT AUX_TRIGGER;
+ANALOG_INPUT SRC_INDEX_IN, AUX_FROM_OFF_ENABLED, AUX_SRC_INDEX, TIMEOUT_TIME_FROM_OFF, TIMEOUT_TIME_FROM_ON;
+ANALOG_OUTPUT SRC_INDEX_OUT;
+
+
+Integer gnSrcIndex, gnInAux;
+
+
+
+
+
+PUSH AUX_TRIGGER
+{
+	If( AUX_FROM_OFF_ENABLED || gnSrcIndex )
+	{
+		gnInAux = 1;
+		SRC_INDEX_OUT = AUX_SRC_INDEX;
+		
+		If( gnSrcIndex )
+		{
+        	Wait( TIMEOUT_TIME_FROM_ON, WTimeoutFromOn )
+        	{
+        		SRC_INDEX_OUT = gnSrcIndex;
+        		gnInAux = 0;
+        	}		
+		}
+		Else
+		{
+			Wait( TIMEOUT_TIME_FROM_OFF, WTimeoutFromOff )
+			{
+				SRC_INDEX_OUT = gnSrcIndex;
+				gnInAux = 0;			
+			}
+		}		
+	}	 	
+}
+
+
+threadsafe change SRC_INDEX_IN
+{
+	If( !gnInAux )
+	{
+		gnSrcIndex = SRC_INDEX_IN;
+	}
+	Else
+	{
+		If( SRC_INDEX_IN != AUX_SRC_INDEX )
+		{
+			CancelWait( WTimeoutFromOn ); 
+			CancelWait( WTimeoutFromOff );
+			gnInAux = 0;
+			gnSrcIndex = SRC_INDEX_IN;
+		}
+	}	
+}
+
+
+
+Function Main( )
+{
+	WaitForInitializationComplete( );
+	gnSrcIndex = SRC_INDEX_IN;
+	gnInAux = 0;
+}

@@ -1,0 +1,18 @@
+<Device Model="CP3">
+   <Network Type="Cresnet" Id="01"/>
+   <Network Type="Ethernet" Id="02">
+      <Device Model="EslaveMC3" DeviceId="16" Name="MC3 Remote Ethernet Processing">
+         <Network Type="Cresnet" Id="01"/>
+         <Network Type="RF" Id="03">
+            <Device Model="MLX-3" DeviceId="03"/>
+            <Device Model="HR-150,HRI-150" DeviceId="04" Name="HR-150"/>
+         </Network>
+      </Device>
+      <Device Model="DM-MD16x16" DeviceId="21"/>
+      <Device Model="SWAMP" DeviceId="22" Name="SWAMP-24x8 (Ethernet)."/>
+      <Device Model="HD-MD4X1-4K-E" DeviceId="23" Name="HD-MD4X1-4K-E[GREAT ROOM]"/>
+      <Device Model="HD-MD6X2-4K-E" DeviceId="27" Name="HD-MD6X2-4K-E [Master Bed]"/>
+      <Device Model="Autonomic MMS-5A" DeviceId="71"/>
+      <Device Model="Autonomic MMS-5A" DeviceId="72"/>
+   </Network>
+</Device>
