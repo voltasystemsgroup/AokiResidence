@@ -1,0 +1,177 @@
+#DEFAULT_VOLATILE
+
+#DEFINE_CONSTANT MAX_IO	32
+
+
+DIGITAL_INPUT _SKIP_, _SKIP_, _SKIP_;
+DIGITAL_INPUT RESET, _SKIP_, PREVIOUS, NEXT;
+
+ANALOG_INPUT _SKIP_, FORCE, RANGE;
+
+DIGITAL_OUTPUT  _SKIP_, _SKIP_, _SKIP_, _SKIP_, _SKIP_;
+DIGITAL_OUTPUT OUT[ MAX_IO ];
+
+ INTEGER_PARAMETER WRAP_AROUND, START_POS;
+
+#BEGIN_PARAMETER_PROPERTIES WRAP_AROUND
+
+	PropDefaultUnit 	= 	UnitDecimal;
+	PropDefaultValue 	= 	1d;
+	PropList 			= 	{ 0d, "DISABLED" }, 
+							{ 1d, "ENABLED" };
+
+#END_PARAMETER_PROPERTIES
+
+#BEGIN_PARAMETER_PROPERTIES START_POS
+
+	PropDefaultUnit 	= 	UnitDecimal;
+	PropDefaultValue 	= 	0d;
+
+#END_PARAMETER_PROPERTIES
+
+Integer gnInitComplete;
+
+Integer gnOutput, gnLastOutput;
+
+Function UpdateOutput( )
+{
+	If( gnLastOutput != gnOutput )
+	{	
+		If( gnLastOutput )
+		{
+			OUT[ gnLastOutput ] = 0;
+			
+			If( gnOutput )
+			{
+				OUT[ gnOutput ] = 1;
+			}
+		}
+	}	
+}
+
+Function ResetRC( )
+{
+	If( START_POS )
+	{
+	 	gnLastOutput = gnOutput;
+	 	gnOutput = START_POS;
+	 	UpdateOutput( );
+	}
+	Else
+	{
+		gnLastOutput = gnOutput;
+		gnOutput = 0;
+	 	UpdateOutput( );
+	} 	
+}
+
+PUSH NEXT
+{
+	Integer nOutOfRange;
+	
+	nOutOfRange = 0;
+	
+	If( gnOutput )
+	{
+		gnLastOutput = gnOutput;
+		gnOutput = gnOutput + 1;
+	}
+	Else
+	{
+		gnLastOutput = 1;
+		gnOutput = 1;
+	}
+	
+	If( gnOutput > RANGE )
+	{	
+		If( WRAP_AROUND )
+		{		
+			gnLastOutput = RANGE;
+			gnOutput = 1;				
+		}
+		Else
+		{
+			nOutOfRange = 1;
+			gnOutput = gnLastOutput;	
+		}
+	}
+	
+	If( !nOutOfRange )
+	{
+		UpdateOutput( );
+	}	
+}	
+
+PUSH PREVIOUS
+{		
+	Integer nOutOfRange;
+	
+	nOutOfRange = 0;
+	
+	If( gnOutput )
+	{
+		gnLastOutput = gnOutput;
+		gnOutput = gnOutput - 1;
+	}
+	Else
+	{
+		gnLastOutput = RANGE;
+		gnOutput = RANGE;
+	}
+		
+	If( gnOutput = 0 )
+	{	
+		If( WRAP_AROUND )
+		{		
+			gnLastOutput = 1;
+			gnOutput = RANGE;				
+		}
+		Else
+		{
+			nOutOfRange = 1;
+			gnOutput = gnLastOutput;
+		}
+	}
+	
+	If( !nOutOfRange )
+	{
+		UpdateOutput( );
+	}	
+} 
+
+PUSH RESET
+{
+	ResetRC( );
+}
+
+CHANGE FORCE
+{
+	If( gnInitComplete )
+	{
+		gnLastOutput = gnOutput;
+		gnOutput = FORCE;
+		UpdateOutput( );
+	}
+}
+
+CHANGE RANGE
+{
+	If( gnInitComplete )
+	{
+		If( gnOutput > RANGE )
+		{
+			ResetRC( );
+		}
+	}
+}
+
+
+Function Main( )
+{
+ 	gnInitComplete = 0;
+	gnInitComplete = !WaitForInitializationComplete( );
+	
+ 	gnLastOutput = START_POS;
+ 	gnOutput = START_POS;
+ 	UpdateOutput( );
+}

@@ -1,0 +1,57 @@
+
+#DEFINE_CONSTANT MAX_IO 65
+#DEFINE_CONSTANT MAX_CHARS 255 
+
+#DEFAULT_NONVOLATILE
+
+STRING_INPUT DATA[ MAX_IO ][ MAX_CHARS ];
+ANALOG_INPUT OUTPUT_DATA_INDEX[ MAX_IO ];
+STRING_OUTPUT OUTPUT[ MAX_IO ];
+
+Integer gnInitComplete;
+
+Function UpdateOutput( Integer nOutputIndex, Integer nDataIndex )
+{	
+	OUTPUT[ nOutputIndex ] = DATA[ nDataIndex ];
+}
+
+CHANGE OUTPUT_DATA_INDEX
+{
+	Integer nOutputIndex, nDataIndex;
+	
+	If( gnInitComplete )
+	{
+		nOutputIndex = GetLastModifiedArrayIndex();
+		nDataIndex = OUTPUT_DATA_INDEX[ nOutputIndex ];
+	
+		If( nDataIndex < MAX_IO )
+		{
+			UpdateOutput( nOutputIndex, nDataIndex + 1 );
+		}
+	}
+}
+	
+
+CHANGE DATA
+{
+	Integer nOutputDataIndex, nDataIndex;
+	
+	If( gnInitComplete )
+	{
+		nDataIndex = GetLastModifiedArrayIndex( );	
+				
+		For( nOutputDataIndex = 1 To MAX_IO )
+		{
+			If( ( OUTPUT_DATA_INDEX[ nOutputDataIndex ] + 1 ) = nDataIndex )
+			{
+				UpdateOutput( nOutputDataIndex, OUTPUT_DATA_INDEX[ nOutputDataIndex ] + 1 ); 
+			}
+		} 
+	}
+}
+
+Function Main( )
+{
+	gnInitComplete = 0;
+	gnInitComplete = !WaitForInitializationComplete( );
+}
