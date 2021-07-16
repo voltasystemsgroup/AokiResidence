@@ -1,6 +1,6 @@
 File Version	v3.04.00
-Modified Date	11/18/2020
-Modified Time	09:48:49
+Modified Date	07/08/2021
+Modified Time	07:30:01
 
 LoadID	LoadName	RoomID	DIM_setting	Ramp_time	Upper_limit	Lower_limit	TotalWattage
 76	DINING 5 LIGHTS	11	True	500	100	5	100
